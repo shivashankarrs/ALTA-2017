@@ -130,20 +130,20 @@ where, R = \{104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606\} a
 %Henceforth, we use `quantification' and `regression' inter-changeably in this document.
 
 \section{Proposed Approach}
-We propose a joint sentence-document model to classify manifesto sentences into one out of 57 categories and also quantify document level RILE score. The joint formulation is not only to capture the task inter-dependencies but also to efficiently use annotations at different levels of granularity (sentence and document) --- RILE score is available for 948 digitized manifestos from 13 countries, whilst sentence level annotations are available only for 235 manifestos. We use a Hierarchical Neural Network for modeling sentence level classification and document level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use neural embeddings to represent words ($e(w)$). We refer to the total set of manifestos available for training as $D$, subset of it which are annotated with sentence level labels (one out of 57 classes) as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}$, $s_{2}$, ..., $s_{l_{d}}$. 
+We propose a joint sentence-document model to classify manifesto sentences into one out of 57 categories and also quantify document level RILE score. The joint formulation is not only to capture the task inter-dependencies but also to efficiently use annotations at different levels of granularity (sentence and document) --- RILE score is available for 948 digitized manifestos from 13 countries, whilst sentence level annotations are available only for 235 manifestos. We use a Hierarchical Neural Network for modeling sentence level classification and document level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use neural embeddings to represent words ($e_{w}$). We refer to the total set of manifestos available for training as $D$, subset of it which are annotated with sentence level labels (one out of 57 classes) as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}$, $s_{2}$, ..., $s_{l_{d}}$. 
 
 %from 13 countries ---  Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States,
 
 \begin{figure*}[!ht]
 \centering
-\includegraphics[height=8.3cm, scale=1.3]{Joint_Model_N8.png}
+\includegraphics[height=8.3cm, scale=1.3]{Joint_Model_N9.png}
 \caption{Hierarchical Neural Network for Joint Sentence-Document Analysis. Optimal model parameters we found --- $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10}
  \label{fig:HNN}
  \end{figure*}
 
 \subsection{Sentence Level Model}
 We represent each sentence using average embedding of its constituent words.
-\[ s_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e(w) \]
+\[ s_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e_{w} \]
 The average embedding representation is given as input to hidden layer with rectified linear activation units (ReLU) to get the hidden representation, which is defined as 
 \[H_{s_{i}}= \max(0,a)\] where, $a = W_{s}^{T}s_{i}$. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives probability of 57 classes as output.
 \[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^T w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^T w_{pj}}}}\]
@@ -159,20 +159,21 @@ Using the Hierarchical Neural Network, we model both sentence level classificati
 
 RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use tanh layer finally to get regressed output with $z = W_{r}^{T}H_{d}$, where $H_{d} = ReLU(W_{d}^{T}S_{r})$, as input.
 
-\[ \hat{Y}_{d} = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
+\[ \hat{y}_{d} = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
 
 Since it is a regression task, we minimize mean-squared error loss function between the predicted $\hat{Y}_{d}$ and actual rile scores $Y_{d}$.
 
+%\sum_{d=1}^{D}
 \begin{equation}
-L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|} \sum_{d=1}^{D} (\hat{Y}_{d} - Y_{d})^2 
+L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^T (\hat{Y}_{d} - Y_{d})
 \end{equation}
 
 Overall, the combined loss function using (2) and (3) for the joint model is 
 
 \begin{equation}
- \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases upto 0.52, with sentence level F-measure around 0.33. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training} 
+ \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})
 \end{equation}
-where $0 \le \alpha \le 1$.
+where $0 \le \alpha \le 1$\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases upto 0.52, with sentence level F-measure around 0.33. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}.
 %\footnote{http://128.2.220.95/multilingual}
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document level tasks} 
 We evaluate both cascaded and joint training for this objective function. We use Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
