@@ -76,16 +76,18 @@ Election programs (so-called manifestos) are published verbal declaration of the
 
 %Countries debate their stand on key issues in the UN. They regularly express statements that signal their priorities and also describe their motivations for cross-country ties.
 %\footnote{\url{https://manifestoproject.wzb.eu/coding_schemes/mp_v5}}
+%Each sentence is segmented if it discusses more than one topic and labeled.
+
 Among many actors, political parties are at the core of contemporary democratic systems. One of the widely used dataset by political scientists includes the Comparative
-Manifesto Project (CMP) dataset, initiated by \cite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (schema is given in Table \ref{fig:CMP}). Each sentence is segmented if it discusses more than one topic and labeled. While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coders' preferences towards particular categories might cause annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. Inorder to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
+Manifesto Project (CMP) dataset, initiated by \cite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (schema is given in Table \ref{fig:CMP}).  While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coders' preferences towards particular categories might cause annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. Inorder to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
 %, using a topic hierarchy defined by Dutch political experts
 
 %  is one of the early works using manifesto text for 
 
 % . In  authors worked with CMP dataset to do coarse-level topic classification (defined by CMP). They used Markov Logic Networks (MLN) to model sentence adjacency topic smoothness constraint. 
-
+% --- RILE, expert survey and voter survey scores 
 Other than the sentence level labels, the manifesto text also has document level signals 
-which quantifies its position in the left-right spectrum --- RILE, expert survey and voter survey scores \cite{slapin2008scaling}. Though sentence level classification and document level quantification tasks are inter-dependent, existing works handle them separately.  Whereas, we propose a joint sentence-document model to handle both the tasks together. Overall, the contributions of this work are given as follows:
+which quantifies its position in the left-right spectrum \cite{slapin2008scaling}. Though sentence level classification and document level quantification tasks are inter-dependent, existing work handle them separately.  Whereas, we propose a joint sentence-document model to handle both the tasks together. Overall, the contributions of this work are given as follows:
 \begin{itemize}
 \item We empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at sentence and document level.
 
@@ -93,7 +95,7 @@ which quantifies its position in the left-right spectrum --- RILE, expert survey
 
 \item We study the value of \textit{country} information used in conjunction with text for document level regression task.
 \end{itemize}
-Henceforth, we use `quantification' and `regression' inter-changeably in this document.
+
 
 \section{Related Work}
 
@@ -101,28 +103,31 @@ The recent adoption of NLP methods had led to significant advances in the field 
 
 With the advancement of computational resources, large scale comparative political text analysis has gained the attention of political scientists, where the objective is to analyze large amounts of data uniformly in order to make it comparable \cite{lucas2015computer}. For example, rather than analyzing the political manifesto of a particular party during an election, mining different manifestos across countries over time can provide deeper comparative insights on political change.
 
-Existing classification models, except \cite{W17-2906}, utilize discrete representation of text (i.e., bag of words).  Also most of the works analyze manifesto text at country level. Recent work has shown the use of neural embeddings for multi-lingual manifesto text coarse-level topic classification (7 major categories) \cite{W17-2906}. In \cite{W17-2906} authors show that multi-lingual embeddings are more effective for cross-lingual coarse-level manifesto text topic classification using labeled data across languages. In this work, we focus on cross-lingual fine-grained thematic classification (57 categories in total), where we have labeled data across all the languages.
+Existing classification models, except \cite{W17-2906}, utilize discrete representation of text (i.e., bag of words).  Also most of the work analyze manifesto text at country level. Recent work has shown the use of neural embeddings for multi-lingual manifesto text coarse-level topic classification (7 major categories) \cite{W17-2906}. In \cite{W17-2906} authors show that multi-lingual embeddings are more effective for cross-lingual coarse-level manifesto text topic classification using labeled data across languages. In this work, we focus on cross-lingual fine-grained thematic classification (57 categories in total), where we have labeled data across all the languages.
 %and can thus exploit only monolingual data (i.e., train and predict same language instances). Hence,
 
-For document level quantification task, many works use label count aggregation of  manually annotated sentences as features \cite{lowe2011scaling, benoit2014putting} and other works use dictionary based supervised methods (wordscores), unsupervised factor analysis based techniques (wordfish) \cite{hjorth2015computers, 2017arXiv170704737B}. Since the latter techniques use discrete word representation, they cannot be used for multi-lingual setting. In \cite{EACL}, authors leverage neural embeddings for EU parliament speech text quantification task with two pivot texts for extreme left and right positions. They represent the documents using word embeddings averaged with TF-IDF scores as weights. Rather than handling sentence and document-level tasks separately, we evaluate the utility of solving them together using joint sentence-document model under cross-lingual setting.
+For document level quantification task, many works use label count aggregation of  manually annotated sentences as features \cite{lowe2011scaling, benoit2014putting} and other works use dictionary based supervised methods (wordscores), unsupervised factor analysis based techniques (wordfish) \cite{hjorth2015computers, 2017arXiv170704737B}. Since the latter techniques use discrete word representation, they cannot be used for multi-lingual setting. In \cite{EACL}, authors leverage neural embeddings for EU parliament speech text quantification task with two pivot texts for extreme left and right positions. They represent the documents using word embeddings averaged with TF-IDF scores as weights. All these approaches handle sentence and document-level tasks separately.
+
+%Rather than handling sentence and document-level tasks separately, we evaluate the utility of solving them together using joint sentence-document model under cross-lingual setting.
 
 \section{Manifesto Text Analysis}
 
 In the CMP, trained annotators categorize manifesto sentences into one of the 57 fine-grained political categories (shown in Table \ref{fig:CMP}) that are grouped into seven policy areas: External Relations, Freedom and Democracy, Political System, Economy, Welfare and Quality of Life, Fabric of Society and Social Groups. Political parties either write their promises as a list of sentences or structured as paragraphs (example is given in Figure \ref{fig:sub2}) which can provide more information related to topic coherence. Also the length of document, measured as number of sentences, varies between manifestos. The typical length (number of sentences) we computed using digitized manifestos (948 in total) from 13 countries --- Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States, is 516.7 $\pm$ 667. Variance in the number of sentences across documents in conjunction with class imbalance makes the automated thematic classification a challenging task.  
 
-A sentence is split into multiple sentences, if it discusses unrelated topics or different aspects of a larger policy. An example sentence split into two is given below
-
+A sentence is split into multiple segments, if it discusses unrelated topics or different aspects of a larger policy. An example sentence split into two is given below
+%(especially RILE quantification)
 \begin{quote}
 \color{red}
 We need to address our close ties with our neighbours (107) \color{blue} as well as the unique challenges facing small business owners in this time of economic hardship. (402)
 \end{quote}
-Scenarios where split sentences discuss different topics, as in the example given above, are not common\footnote{In \cite{daubler2012natural}, using a sample of 15 manifestos, authors noted that around 7.7\% split sentences discuss different topics}. Also the segmentation was shown to be inconsistent and to have no effect on quantifying proportion of sentences discussing various topics and document level regression tasks (especially RILE quantification) \cite{daubler2012natural}. Hence, similar to previous works \cite{biessmann2016automating, W17-2906}, we consider the sentence level classification as a multi-class single label problem. We use the segmented text when available (especially for evaluation), and complete sentences otherwise.
+Scenarios where split sentences discuss different topics, as in the example given above, are not common\footnote{In \cite{daubler2012natural}, using a sample of 15 manifestos, authors noted that around 7.7\% split sentences discuss different topics}. Also the segmentation was shown to be inconsistent and to have no effect on quantifying proportion of sentences discussing various topics and document level regression tasks \cite{daubler2012natural}. Hence, similar to previous works \cite{biessmann2016automating, W17-2906}, we consider the sentence level classification as a multi-class single label problem. We use the segmented text when available (especially for evaluation), and complete sentences otherwise.
 
 A manifesto as a whole can be positioned on the left-right spectrum based on the proportion of topics discussed. We use the RILE score, which is defined as the difference between count of sentences discussing left and right topics \cite{cat}, 
 \begin{equation}
 RILE = \sum_{r \in R} per_{r} - \sum_{l \in L} per_{l}
 \end{equation}
-where, R = \{104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606\} and L = \{103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701\}, ``$per_{xyz}$'' denotes share of each topic (xyz) as given in Table \ref{fig:CMP}, per document.  Note that the RILE score is provided almost for all the manifestos in CMP dataset, but the sentence level annotations are provided only for a subset of manifestos.
+where, R = \{104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606\} and L = \{103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701\}, ``$per_{xyz}$'' denotes share of each topic (xyz) as given in Table \ref{fig:CMP}, per document.  Note that the RILE score is provided almost for all the manifestos in CMP dataset, but the sentence level annotations are provided only for a subset of manifestos. 
+%Henceforth, we use `quantification' and `regression' inter-changeably in this document.
 
 \section{Proposed Approach}
 We propose a joint sentence-document model to classify manifesto sentences into one out of 57 categories and also quantify document level RILE score. The joint formulation is not only to capture the task inter-dependencies but also to efficiently use annotations at different levels of granularity (sentence and document) --- RILE score is available for 948 digitized manifestos from 13 countries, whilst sentence level annotations are available only for 235 manifestos. We use a Hierarchical Neural Network for modeling sentence level classification and document level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use neural embeddings to represent words ($e(w)$). We refer to the total set of manifestos available for training as $D$, subset of it which are annotated with sentence level labels (one out of 57 classes) as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}$, $s_{2}$, ..., $s_{l_{d}}$. 
@@ -131,7 +136,7 @@ We propose a joint sentence-document model to classify manifesto sentences into 
 
 \begin{figure*}[!ht]
 \centering
-\includegraphics[height=8.3cm, scale=1.3]{Joint_Model_N7.png}
+\includegraphics[height=8.3cm, scale=1.3]{Joint_Model_N8.png}
 \caption{Hierarchical Neural Network for Joint Sentence-Document Analysis. Optimal model parameters we found --- $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10}
  \label{fig:HNN}
  \end{figure*}
@@ -152,7 +157,7 @@ Using the Hierarchical Neural Network, we model both sentence level classificati
 
 \[ S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] \]
 
-RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use tanh layer finally to get regressed output with $z = H_{d} = ReLU(W_{d}^{T}S_{r})$ as input.
+RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use tanh layer finally to get regressed output with $z = W_{r}^{T}H_{d}$, where $H_{d} = ReLU(W_{d}^{T}S_{r})$, as input.
 
 \[ \hat{Y}_{d} = tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
 
@@ -165,7 +170,7 @@ L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|} \sum_{d=1}^{D} (\hat{Y}_{d} - Y_{d})^2
 Overall, the combined loss function using (2) and (3) for the joint model is 
 
 \begin{equation}
- \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})\footnote{we use $\alpha$=0.5, since we give equal weight for sentence and document level tasks} 
+ \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases upto 0.52, with sentence level F-measure around 0.33. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training} 
 \end{equation}
 where $0 \le \alpha \le 1$.
 %\footnote{http://128.2.220.95/multilingual}
@@ -244,8 +249,9 @@ Since distributed representation allows to leverage text across languages, we ev
 \item{\textit{Combined average embedding ($AE$-$NN_{c}$):}} We build a Neural Network classifier with training instances combined across languages, with average neural embedding as sentence representation. This is our proposed approach for sentence-level model.
 \end{description}
 
-Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally.  We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. Under cross-lingual setting, the proposed approach trained using \textit{cascaded training} uses $AE$-$NN_{c}$ for sentence level model. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \textit{$JT_{s}$}.  We observed that $JT_{s}$ has a comparable performance with $AE$-$NN_{c}$. Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches. Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally.  We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. Note that Neural Network model has a single hidden layer commonly for all the sentence and document level approaches. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. Under cross-lingual setting, the proposed approach trained using \textit{cascaded training} uses $AE$-$NN_{c}$ for sentence level model. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \textit{$JT_{s}$}.  We observed that $JT_{s}$ has a comparable performance with $AE$-$NN_{c}$. Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches. Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
 %\clearpage
+
 
  \begin{table*}[!htp]
   \centering
@@ -372,8 +378,9 @@ Since the definition of left-right varies between countries, we study the influe
 \end{table}
 
 \section{Conclusion and Future Work}
-In this work we evaluated the utility of a joint sentence-document model for sentence level thematic classification and document level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches (b) joint-training leverages sentence level annotations more effectively than cascaded approach for RILE score regression task.
-There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. We used off-the-shelf embeddings, which leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
+In this work we evaluated the utility of a joint sentence-document model for sentence level thematic classification and document level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches (b) joint-training leverages sentence level annotations more effectively than cascaded approach for RILE score regression task, but doesn't provide significant gains for sentence level task. There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. Off-the-shelf embeddings leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
+
+%We used off-the-shelf embeddings, which leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus.
 
 \begin{figure*}
 \includegraphics[width=1\linewidth]{US_Democrats_1.png}
