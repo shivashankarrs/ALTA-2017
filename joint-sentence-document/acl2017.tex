@@ -173,7 +173,7 @@ Overall, the combined loss function using (2) and (3) for the joint model is
 \begin{equation}
  \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})
 \end{equation}
-where $0 \le \alpha \le 1$\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases upto 0.52, with sentence level F-measure around 0.33. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}.
+where $0 \le \alpha \le 1$\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases with decrease in sentence level F-measure. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}.
 %\footnote{http://128.2.220.95/multilingual}
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document level tasks} 
 We evaluate both cascaded and joint training for this objective function. We use Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
