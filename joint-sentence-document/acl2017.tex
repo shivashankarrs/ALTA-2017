@@ -120,7 +120,7 @@ A sentence is split into multiple segments, if it discusses unrelated topics or 
 \color{red}
 We need to address our close ties with our neighbours (107) \color{blue} as well as the unique challenges facing small business owners in this time of economic hardship. (402)
 \end{quote}
-Scenarios where split sentences discuss different topics, as in the example given above, are not common\footnote{In \cite{daubler2012natural}, using a sample of 15 manifestos, authors noted that around 7.7\% split sentences discuss different topics}. Also the segmentation was shown to be inconsistent and to have no effect on quantifying proportion of sentences discussing various topics and document level regression tasks \cite{daubler2012natural}. Hence, similar to previous works \cite{biessmann2016automating, W17-2906}, we consider the sentence level classification as a multi-class single label problem. We use the segmented text when available (especially for evaluation), and complete sentences otherwise.
+Scenarios where split sentences discuss different topics, as in the example given above, are not common.\footnote{In \cite{daubler2012natural}, using a sample of 15 manifestos, authors noted that around 7.7\% split sentences discuss different topics} Also the segmentation was shown to be inconsistent and to have no effect on quantifying proportion of sentences discussing various topics and document level regression tasks \cite{daubler2012natural}. Hence, similar to previous works \cite{biessmann2016automating, W17-2906}, we consider the sentence level classification as a multi-class single label problem. We use the segmented text when available (especially for evaluation), and complete sentences otherwise.
 
 A manifesto as a whole can be positioned on the left-right spectrum based on the proportion of topics discussed. We use the RILE score, which is defined as the difference between count of sentences discussing left and right topics \cite{cat}, 
 \begin{equation}
@@ -153,7 +153,7 @@ L_{S}(D_{s},Y_{s})=-\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_
 \end{equation}
 %\footnote{\url{https://keras.io/layers/wrappers/\#timedistributed}%}
 \subsection{Joint Sentence-Document Model}
-Using the Hierarchical Neural Network, we model both sentence level classification and document level regression tasks together. In the combined model, we use unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($1$ to $n$). We use average-pooling to create document representation with individual sentence representations. We concatenate hidden representation ($H_{s}$) and predicted output distribution ($\hat{Y}_{s}$) of sentences before average-pooling\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution}.
+Using the Hierarchical Neural Network, we model both sentence level classification and document level regression tasks together. In the combined model, we use unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($1$ to $n$). We use average-pooling to create document representation with individual sentence representations. We concatenate hidden representation ($H_{s}$) and predicted output distribution ($\hat{Y}_{s}$) of sentences before average-pooling.\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution}
 
 \[ S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] \]
 
@@ -173,7 +173,7 @@ Overall, the combined loss function using (2) and (3) for the joint model is
 \begin{equation}
  \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})
 \end{equation}
-where $0 \le \alpha \le 1$\footnote{We use $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases with decrease in sentence level F-measure. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}.
+where $0 \le \alpha \le 1$.\footnote{We use  $\alpha$=0.5, since we give equal weight for sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases while sentence level F-score decreases. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}
 %\footnote{http://128.2.220.95/multilingual}
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document level tasks} 
 We evaluate both cascaded and joint training for this objective function. We use Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
@@ -189,7 +189,7 @@ The proposed architecture evaluates the effectiveness of posing sentence-level t
 
 %Secondly, we also study the utility of having more document level annotations --- one-dimensional scores on the left-right spectrum, compared to sentence level annotations, especially for sentence level thematic classification task. 
 
-\section{Experimental Results}
+\section{Experiments}
 As mentioned earlier, we use manifestos collected and annotated by political scientists at CMP. In this work, we used digitized manifestos from 13 countries, 948 in total which are written in 6 different languages --- Danish (Denmark), English (Australia, Ireland, New Zealand, South Africa, United Kingdom, United States), Finnish (Finland), French (France), German (Austria, Germany, Switzerland) and Italian (Italy). Out of the 948 manifestos, 235 are annotated with sentence level labels (Table \ref{fig:CMP}). We have RILE scores for all the 948 manifestos. Statistics about number of annotated documents and sentences with fine-grained labels (from Table \ref{fig:CMP}) across languages is given below.
  \begin{table}[!htp]
   \centering
@@ -313,7 +313,7 @@ Finally, each document is represented by the distribution of words mapped to dif
 
 \item{Sentence level model and RILE formulation \textit{($AE$-$NN_{c}^{rile}$)}:} Here the predictions of sentence level model in the cascaded approach ($AE$-$NN_{c}$) are used directly with RILE formulation (equation (1)) to derive RILE score for manifestos.
 
-\item{\textit{Cross-lingual scaling ($CLS$):}} This is a recent unsupervised approach for multi-lingual political speech text positioning task \cite{EACL}. Authors use average word-embeddings weighed by TF-IDF score to represent documents\footnote{We use this aggregate representation since it was shown to be better than word alignment and scoring approach \cite{EACL}}. Then a graph is constructed using pair-wise distance of documents. Given two pivots texts for extreme left and right positions [-1, +1], label propagation approach is used to quantify other documents in the graph.
+\item{\textit{Cross-lingual scaling ($CLS$):}} This is a recent unsupervised approach for multi-lingual political speech text positioning task \cite{EACL}. Authors use average word-embeddings weighed by TF-IDF score to represent documents.\footnote{We use this aggregate representation since it was shown to be better than word alignment and scoring approach \cite{EACL}} Then a graph is constructed using pair-wise distance of documents. Given two pivots texts for extreme left and right positions [-1, +1], label propagation approach is used to quantify other documents in the graph.
 \end{description}
 
  \begin{table}[!htb]
