@@ -250,8 +250,33 @@ Since distributed representation allows to leverage text across languages, we ev
 \item{\textit{Combined average embedding ($AE$-$NN_{c}$):}} We build a Neural Network classifier with training instances combined across languages, with average neural embedding as sentence representation. This is our proposed approach for sentence-level model.
 \end{description}
 
-Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally.  We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. Note that Neural Network model has a single hidden layer commonly for all the sentence and document level approaches. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. Under cross-lingual setting, the proposed approach trained using \textit{cascaded training} uses $AE$-$NN_{c}$ for sentence level model. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \textit{$JT_{s}$}.  We observed that $JT_{s}$ has a comparable performance with $AE$-$NN_{c}$. Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches. Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally. Neural Network model has a single hidden layer commonly for all the sentence and document level approaches. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words. Under cross-lingual setting, $AE$-$NN_{c}$ is the sentence level Neural Network model. We use $AE$-$NN_{c}$ in the \textit{cascaded training} for obtaining document level \textit{RILE} prediction. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \textit{$JT_{s}$}.  We observed that $JT_{s}$ has a comparable performance with $AE$-$NN_{c}$. Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches. Overall, cross-lingual training performs better than mono-lingual setting except for $da$ and $it$.
+%Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
 %\clearpage
+
+
+%  \begin{table*}[!htp]
+%   \centering
+%   \begin{tabular}{ c | c c c | c c c}
+%   \toprule
+%     $Lang.$ & $BoW$-$LR$ & $BoW$-$NN$ & $AE$-$NN_{m}$ & $CNN$ & $AE$-$NN_{c}$ & $JT_{s}$\\
+%     \midrule
+%     da  & 	0.29 & \textbf{0.36} & 0.24 & 0.30 & 0.28 & 0.30\\
+%     en   &  0.24 & 0.29 & \textbf{0.43} & 0.40 & 0.42 & 0.41\\    	
+%     fi  &   0.21 & 0.23 & 0.26 & \textbf{0.30} & 0.27 & 0.26\\
+%     fr    & 0.28 & 0.28 & 0.24 & 0.36 & 0.37 & \textbf{0.38} \\
+%     de    &  0.20 & 0.23 & 0.31 & 0.31 & 0.31 & \textbf{0.33}\\
+%     it    & 0.14 & 0.22 & 0.25 & 0.30 & \textbf{0.32} & 0.26\\
+% \midrule
+% Avg.    & 0.22 & 0.26 & 0.35 & 0.34 & \textbf{0.36} & 0.35\\
+% \midrule
+% Setting &  \multicolumn{3}{c|}{Mono} & \multicolumn{3}{c}{Cross} \\
+%  \bottomrule
+
+%   \end{tabular}
+%   \caption{Micro-Averaged F-measure. Best scores are given in bold under each language setting}
+%   \label{tab:al}
+% \end{table*}
 
 
  \begin{table*}[!htp]
@@ -260,14 +285,14 @@ Commonly for all empirical evaluation, we compute micro-averaged performance wit
   \toprule
     $Lang.$ & $BoW$-$LR$ & $BoW$-$NN$ & $AE$-$NN_{m}$ & $CNN$ & $AE$-$NN_{c}$ & $JT_{s}$\\
     \midrule
-    da  & 	0.29 & \textbf{0.36} & 0.24 & 0.30 & 0.28 & 0.30\\
-    en   &  0.24 & 0.29 & \textbf{0.43} & 0.40 & 0.42 & 0.41\\    	
-    fi  &   0.21 & 0.23 & 0.26 & \textbf{0.30} & 0.27 & 0.26\\
-    fr    & 0.28 & 0.28 & 0.24 & 0.36 & 0.37 & \textbf{0.38} \\
-    de    &  0.20 & 0.23 & 0.31 & 0.31 & 0.31 & \textbf{0.33}\\
-    it    & 0.14 & 0.22 & 0.25 & 0.30 & \textbf{0.32} & 0.26\\
+    da  & 	0.29 & \textbf{0.36} & 0.24 & 0.30 & 0.32 & 0.30\\
+    en   &  0.36 & 0.38 & \textbf{0.42} & 0.41 & \textbf{0.42} & 0.41\\    	
+    fi  &   0.21 & 0.29 & 0.28 & \textbf{0.30} & 0.28 & 0.26\\
+    fr    & 0.28 & 0.34 & 0.25 & 0.36 & 0.33 & \textbf{0.38} \\
+    de    &  0.30 & 0.32 & 0.31 & 0.32 & \textbf{0.34} & \textbf{0.34}\\
+    it    & \textbf{0.39} & 0.37 & 0.25 & 0.30 & 0.32 & 0.30\\
 \midrule
-Avg.    & 0.22 & 0.26 & 0.35 & 0.34 & \textbf{0.36} & 0.35\\
+Avg.    & 0.32 & 0.35 & 0.35 & 0.36 & 0.37 & 0.36\\
 \midrule
 Setting &  \multicolumn{3}{c|}{Mono} & \multicolumn{3}{c}{Cross} \\
  \bottomrule
@@ -327,7 +352,7 @@ Finally, each document is represented by the distribution of words mapped to dif
     $BoW$-$NN$  &   0.054 & 0.23\\
     $AE$-$NN_{d}$    & 0.057 & 0.14\\
     $BoC$    &  0.052 & 0.33\\
-    $AE$-$NN_{c}^{rile}$   & 0.060 & 0.35\\
+    $AE$-$NN_{c}^{rile}$   & 0.059 & 0.37\\
     %CLS   & 0.815 & 0.24\\
     $CLS$   & -- & 0.24\\
     $Cas_{d}$  &  0.050 & 0.41 \\
