@@ -4,6 +4,7 @@
 \bibitem[{Akoglu(2014)}]{akoglu2014quantifying}
 Leman Akoglu. 2014.
 \newblock Quantifying political polarity based on bipartite opinion networks.
+\newblock In {\em AAAI\/}.
 
 \bibitem[{Ammar et~al.(2016)Ammar, Mulcaire, Tsvetkov, Lample, Dyer, and
   Smith}]{ammar2016massively}
@@ -18,12 +19,13 @@ Akshat Bakliwal, Jennifer Foster, Jennifer van~der Puil, Ron O'Brien, Lamia
   Tounsi, and Mark Hughes. 2013.
 \newblock Sentiment analysis of political tweets: Towards an accurate
   classifier.
-\newblock Association for Computational Linguistics.
+\newblock In {\em ACL\/}.
 
 \bibitem[{Benoit and D{\"a}ubler(2014)}]{benoit2014putting}
 Kenneth Benoit and Thomas D{\"a}ubler. 2014.
 \newblock Putting text in context: How to estimate better left-right positions
   by scaling party manifesto data using item response theory.
+\newblock In {\em Mapping Policy Preferences from Texts Conference\/}.
 
 \bibitem[{Biessmann(2016)}]{biessmann2016automating}
 Felix Biessmann. 2016.
@@ -43,7 +45,7 @@ Ian Budge and Michael Laver. 1992.
   Laver}]{daubler2012natural}
 Thomas D{\"a}ubler, Kenneth Benoit, Slava Mikhaylov, and Michael Laver. 2012.
 \newblock Natural sentences as valid units for coded political texts.
-\newblock {\em British Journal of Political Science\/} 42(4):937--951.
+\newblock {\em British Journal of Political Science\/} .
 
 \bibitem[{Ding et~al.(2011)Ding, Zhang, and Huang}]{ding2011keyphrase}
 Zhuoye Ding, Qi~Zhang, and Xuanjing Huang. 2011.
@@ -54,7 +56,7 @@ Zhuoye Ding, Qi~Zhang, and Xuanjing Huang. 2011.
   Ponzetto}]{W17-2906}
 Goran Glava{\v{s}}, Federico Nanni, and Simone~Paolo Ponzetto. 2017.
 \newblock Cross-lingual classification of topics in political texts.
-\newblock Association for Computational Linguistics, pages 42--46.
+\newblock In {\em ACL WS\/}.
 
 \bibitem[{Glavas et~al.(2017)Glavas, Nanni, and Ponzetto}]{EACL}
 Goran Glavas, Federico Nanni, and Simone~Paolo Ponzetto. 2017.
@@ -65,7 +67,7 @@ Goran Glavas, Federico Nanni, and Simone~Paolo Ponzetto. 2017.
 Justin Grimmer and Brandon~M Stewart. 2013.
 \newblock Text as data: The promise and pitfalls of automatic content analysis
   methods for political texts.
-\newblock {\em Political analysis\/} 21(3):267--297.
+\newblock {\em Political analysis\/} .
 
 \bibitem[{Hjorth et~al.(2015)Hjorth, Klemmensen, Hobolt, Hansen, and
   Kurrild-Klitgaard}]{hjorth2015computers}
@@ -141,15 +143,13 @@ Jonathan~B Slapin and Sven-Oliver Proksch. 2008.
 \bibitem[{Sridhar et~al.(2014)Sridhar, Getoor, and
   Walker}]{sridhar2014collective}
 Dhanya Sridhar, Lise Getoor, and Marilyn Walker. 2014.
-\newblock Collective stance classification of posts in online debate forums.
-\newblock {\em ACL 2014\/} .
+\newblock Collective stance classification of posts in online debate forums .
 
 \bibitem[{Verberne et~al.(2014)Verberne, D'hondt, van~den Bosch, and
   Marx}]{verberne2014automatic}
 Suzan Verberne, Eva D'hondt, Antal van~den Bosch, and Maarten Marx. 2014.
 \newblock Automatic thematic classification of election manifestos.
-\newblock In {\em Information Processing \& Management\/}. volume~50, pages
-  554--567.
+\newblock In {\em Information Processing \& Management\/}.
 
 \bibitem[{Volkens et~al.(2011)Volkens, Lacewell, and Pola~Lehmann}]{CMP}
 Andrea Volkens, Onawa Lacewell, and Sven~Regel Henrike Schultzeand

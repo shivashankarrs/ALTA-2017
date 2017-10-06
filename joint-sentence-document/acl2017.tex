@@ -140,7 +140,7 @@ We propose a joint sentence-document model to classify manifesto sentences into 
 
 \begin{figure*}[!ht]
 \centering
-\includegraphics[height=8.3cm, scale=1.3]{ALTA_Model.pdf}
+\includegraphics[height=8.4cm, scale=1.4]{ALTA_Model.pdf}
 \caption{Hierarchical Neural Network for Joint Sentence-Document Analysis. $s_{1}$, $s_{2}$,...$s_{n}$ are input sentences, $W_{s}$ and $W_{p}$ are shared across unrolled sentences. $\hat{Y}_{s_{i}}$ denotes  57 classes and $\hat{y}_{d}$ denotes the estimated RILE score}
  \label{fig:HNN}
  \end{figure*}
@@ -148,8 +148,8 @@ We propose a joint sentence-document model to classify manifesto sentences into 
 \subsection{Sentence Level Model}
 We represent each sentence using average embedding of its constituent words, $ \bm{s}_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e_{w}$.
 The average embedding representation is given as input to hidden layer with rectified linear activation units (ReLU) to get the hidden representation, which is defined as 
-\[H_{s_{i}}= \max(0,a)\] where, $a = W_{s}^{T}\bm{s}_{i}$. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives probability of 57 classes as output.
-\[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^T w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^T w_{pj}}}}\]
+\[H_{s_{i}}= \max(0,a)\] where, $a = \mathbf{W_{s}}^\top \bm{s}_{i}$. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives probability of 57 classes as output.
+\[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^\top w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^\top w_{pj}}}}\]
 We use cross-entropy loss function for sentence level model. For sentences in $D_{s}$, with ground truth labels $Y_{s}$ (one-of-K encoding), the loss function is given as follows
 \begin{equation}
 L_{S}(D_{s},Y_{s})=-\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_{j=1}^{l_{d_{i}}}\sum_{k=1}^{K} Y_{s_{ijk}} \ln \hat{Y}_{s_{ijk}}  
@@ -160,7 +160,7 @@ Using the Hierarchical Neural Network, we model both sentence level classificati
 
 \[ S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] \]
 
-RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use tanh layer finally to get regressed output with $z = W_{r}^{T}H_{d}$, where $H_{d}$ = ReLU$(W_{d}^{T}S_{r})$, as input.
+RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use $\tanh$ layer finally to get regressed output with $z = \mathbf{W_{r}}^\top H_{d}$, where $H_{d}$ = ReLU$(\mathbf{W_{d}}^\top S_{r})$, as input.
 
 \[ \hat{\bm{y}}_{d} = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
 
@@ -168,13 +168,13 @@ Since it is a regression task, we minimize mean-squared error loss function betw
 
 %\sum_{d=1}^{D}
 \begin{equation}
-L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^T (\hat{Y}_{d} - Y_{d})
+L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^\top (\hat{Y}_{d} - Y_{d})
 \end{equation}
 
 Overall, the combined loss function using (2) and (3) for the joint model is 
 
 \begin{equation}
- \alpha * L_{s}(D_{s},Y_{s}) + (1-\alpha) * L_{d}(\hat{Y}_{d}, Y_{d})
+ \alpha \times L_{s}(D_{s},Y_{s}) + (1-\alpha) \times L_{d}(\hat{Y}_{d}, Y_{d})
 \end{equation}
 where $0 \le \alpha \le 1$.\footnote{We set  $\alpha$=0.3 empirically which gave maximum score for both sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases while sentence level F-score decreases. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}
 %\footnote{http://128.2.220.95/multilingual}
@@ -284,7 +284,7 @@ Avg.    & 0.32 & 0.34 & 0.35 & 0.34 & \textbf{0.36} & 0.35\\
   \label{tab:al}
 \end{table*}
 
-For document level regression task, following are the baseline approaches. Note that we use \textit{tanh} output for all the models, since the range of re-scaled RILE is from -1 to +1.
+For document level regression task, following are the baseline approaches. Note that we use $\tanh$ output for all the models, since the range of re-scaled RILE is from -1 to +1.
 
 % with \textit{tanh} output.
 \begin{description}
@@ -335,20 +335,20 @@ We measure the importance of annotated text at sentence and document level for R
 
 \begin{figure}[!ht]
 \centering
-  \includegraphics[width=0.95\linewidth]{altw1.pdf}
+  \includegraphics[width=1\linewidth]{altw1.pdf}
   \caption{Fixing 80\% training documents with RILE score, ratio of documents with sentence level annotations is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
   \label{fig:sentl}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-  \includegraphics[width=0.95\linewidth]{altw2.pdf}
+  \includegraphics[width=1\linewidth]{altw2.pdf}
   \caption{Fixing 80\% training documents with sentence level annotations, ratio of documents with RILE score is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
  \label{fig:docl}
  \end{figure}
  
 \subsection{Use of Country Information}
-Since the definition of left-right varies between countries, we study the influence of \textit{country} information in the proposed model with \textit{joint-training}. We use two ways to incorporate country information: (a) \textit{stack} --- one-hot encoding (13 countries, 1 X 13 vector) of each manifesto's \textit{country} is concatenated with hidden representation of the document ($S_{r}$ in Figure \ref{fig:HNN}) (b) \textit{non-linear stack} --- one-hot-encoded country vector is passed through a hidden layer with \textit{tanh} non-linear activation and concatenated with $S_{r}$. With both the models we observed mild improvement in correlation (given in Table \ref{tab:al2}).
+Since the definition of left-right varies between countries, we study the influence of \textit{country} information in the proposed model with \textit{joint-training}. We use two ways to incorporate country information: (a) \textit{stack} --- one-hot encoding (13 countries, 1 X 13 vector) of each manifesto's \textit{country} is concatenated with hidden representation of the document ($S_{r}$ in Figure \ref{fig:HNN}) (b) \textit{non-linear stack} --- one-hot-encoded country vector is passed through a hidden layer with $\tanh$ non-linear activation and concatenated with $S_{r}$. With both the models we observed mild improvement in correlation (given in Table \ref{tab:al2}).
 
  \begin{table}[H]
   \centering
