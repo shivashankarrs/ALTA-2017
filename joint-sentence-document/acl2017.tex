@@ -176,7 +176,7 @@ Overall, the combined loss function using (2) and (3) for the joint model is
 \begin{equation}
  \alpha \times L_{s}(D_{s},Y_{s}) + (1-\alpha) \times L_{d}(\hat{Y}_{d}, Y_{d})
 \end{equation}
-where $0 \le \alpha \le 1$.\footnote{We set  $\alpha$=0.3 empirically which gave maximum score for both sentence and document level tasks. We observed a tradeoff in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases while sentence level F-score decreases. Higher value of $\alpha$ (0.9) gives performance closer to cascaded training}
+where $0 \le \alpha \le 1$.
 %\footnote{http://128.2.220.95/multilingual}
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document level tasks} 
 We evaluate both cascaded and joint training for this objective function. We use Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
@@ -215,13 +215,13 @@ As mentioned earlier, we use manifestos collected and annotated by political sci
   \label{tab:al}
 \end{table}
 
-We use off-the-shelf multi-lingual word embeddings\footnote{\url{http://128.2.220.95/multilingual}} to represent words. We chose embeddings trained using translation invariance approach \cite{ammar2016massively}, with size 512 for our work, since we found it empirically better compared to other approaches. As mentioned in Section 4.1, we use average embedding as sentence representation. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We first compare traditional bag-of-words discrete representation with distributed neural representation for words for fine-grained thematic classification, under mono-lingual training setting ($Mono$). Hence we compare the following approaches. 
+We use off-the-shelf multi-lingual word embeddings\footnote{\url{http://128.2.220.95/multilingual}} to represent words. We chose embeddings trained using translation invariance approach \cite{ammar2016massively}, with size 512 for our work, since we found it empirically better compared to other approaches. As mentioned in Section 4.1, we use average embedding as sentence representation. Neural Network model has a single hidden layer for all the sentence and document level approaches. We first compare traditional bag-of-words discrete representation with distributed neural representation for words for fine-grained thematic classification, under mono-lingual training setting (\em{Mono-lingual}). \rm Hence we compare the following approaches. 
 %Following are the sentence classification baseline techniques that we compare our proposed approach against.
 
 \begin{description}
-\item{Bag of words (\em{BoW-LR}, \em{BoW-NN}):} We use TF-IDF representation for sentences and build a model for each language separately. We use Logistic Regression classifier, which is the state-of-art approach for fine-grained (57 classes) manifesto sentence classification \cite{biessmann2016automating}. We refer to this approach as \textit{LR}. We also use Neural Network classifier, which we refer as \textit{NN}.
+\item{Bag of words (\em{BoW-LR}, \em{BoW-NN}):} We use TF-IDF representation for sentences and build a model for each language separately. We use Logistic Regression classifier, which is the state-of-art approach for fine-grained (57 classes) manifesto sentence classification \cite{biessmann2016automating}. We refer to this approach as \em{BoW-LR}. \rm We also use Neural Network classifier to capture non-linear patterns, which we refer as \em{BoW-NN}.
 
-\item{Language-wise average embedding (\em{AE-NN$_{m}$}):} We build a Neural Network classifier per language, with average neural embedding as sentence representation.
+\item{Language-wise average embedding (\em{AE-NN$_{m}$}):} \rm We build a Neural Network classifier per language, with average neural embedding as sentence representation.
 \end{description}
 
 % Commonly for all empirical evaluation, we compute micro-average performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally.  We compute micro-averaged F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. In the mono-lingual setting (Table \ref{tab:res1}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. 
@@ -246,14 +246,16 @@ We use off-the-shelf multi-lingual word embeddings\footnote{\url{http://128.2.22
 %   \caption{Micro-Averaged F-measure. Best scores are given in bold under each language setting}
 %   \label{tab:res1}
 % \end{table}
-Since distributed representation allows to leverage text across languages, we evaluate the following approaches with combined training sentences across languages ($Cross$).
+Since distributed representation allows to leverage text across languages, we evaluate the following approaches with combined training sentences across languages (\em{Cross-lingual}). \rm
 
 \begin{description}
 \item{Convolutional Neural Network (\em{CNN}):} CNN was shown to be effective for cross-lingual manifesto text coarse-level (7 major domains as shown in Table \ref{fig:CMP}) topic classification \cite{W17-2906}. So, we evaluate CNN with a similar architecture --- single convolution (32 filters with window size 3), single max pooling layer and finally a softmax layer. We use neural embeddings to represent words. Similar to \cite{W17-2906} we combined training instances across all the languages.
 \item{Combined average embedding (\em{AE-NN$_{c}$}):} We build a Neural Network classifier with training instances combined across languages, with average neural embedding as sentence representation. This is our proposed approach for sentence-level model.
 \end{description}
 
-Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally. Neural Network model has a single hidden layer commonly for all the sentence and document level approaches. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words (except for $en$ which was the source language for obtaining multi-lingual embeddings). Under cross-lingual setting, \em{AE-N$N_{c}$} \rm is the sentence level Neural Network model. We use \em{AE-N$N_{c}$} \rm in the \textit{cascaded training} for obtaining document level \textit{RILE} prediction. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \em{AE-NN$_{c}$}. \rm We observed that \em{JT$_{s}$} \rm has a comparable performance with \em{AE-NN$_{c}$}. Also \em{CNN}, \em{AE-NN$_{c}$} \rm and \em{JT$_{s}$} \rm use combined training instances across languages. Except for $da$ and $it$ cross-lingual training performs better than mono-lingual setting.
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
+
+Under cross-lingual setting, \em{AE-N$N_{c}$} \rm is the sentence level Neural Network model. We use \em{AE-N$N_{c}$} \rm in the \textit{cascaded training} for obtaining document level \textit{RILE} prediction. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \em{AE-NN$_{c}$}. \rm We set  $\alpha$=0.4 (in equation (4)) empirically which gave best score for both sentence and document level tasks. We observed a trade-off in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases (to 0.52) while sentence level F-score decreases (to 0.33). Higher value of $\alpha$ (0.9) gives performance closer to cascaded training. We observed that \em{JT$_{s}$} \rm has a comparable performance with \em{AE-NN$_{c}$}. \rm Also \em{CNN}, \em{AE-NN$_{c}$} \rm and \em{JT$_{s}$} \rm use combined training instances across languages compared to other approaches. Except for $da$ and $it$ cross-lingual training performs better than mono-lingual setting. 
 %Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches.
 %Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
 %\clearpage
@@ -335,14 +337,14 @@ We measure the importance of annotated text at sentence and document level for R
 
 \begin{figure}[!ht]
 \centering
-  \includegraphics[width=1\linewidth]{altw1.pdf}
+  \includegraphics[width=0.92\linewidth]{altw1.pdf}
   \caption{Fixing 80\% training documents with RILE score, ratio of documents with sentence level annotations is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
   \label{fig:sentl}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-  \includegraphics[width=1\linewidth]{altw2.pdf}
+  \includegraphics[width=0.92\linewidth]{altw2.pdf}
   \caption{Fixing 80\% training documents with sentence level annotations, ratio of documents with RILE score is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
  \label{fig:docl}
  \end{figure}
