@@ -77,6 +77,12 @@ Frederik Hjorth, Robert Klemmensen, Sara Hobolt, Martin~Ejnar Hansen, and Peter
   estimating party positions.
 \newblock {\em Research \& Politics\/} .
 
+\bibitem[{Hoang et~al.(2016)Hoang, Haffari, and Cohn}]{hoang2016incorporating}
+Cong Duy~Vu Hoang, Gholamreza Haffari, and Trevor Cohn. 2016.
+\newblock Incorporating side information into recurrent neural network language
+  models.
+\newblock In {\em NAACL-HLT\/}.
+
 \bibitem[{Karan et~al.(2016)Karan, {\v{S}}najder, {\v{S}}irinic, and
   Glava{\v{s}}}]{karan2016analysis}
 Mladen Karan, Jan {\v{S}}najder, Daniela {\v{S}}irinic, and Goran Glava{\v{s}}.
