@@ -78,7 +78,7 @@
 
 
 \begin{abstract}
-Election programs (so-called manifestos) are published verbal declaration of the intentions, motives, or views of the political party. Political scientists use manifestos to understand policy-relevant themes  and also quantify a party's position on the left--right spectrum. Rather than handling the two tasks separately, we propose a joint sentence--document model for sentence-level thematic classification and document-level position quantification using manifestos in different languages. In order to handle text from multiple languages we exploit continuous neural embeddings for semantic text representation. We empirically show that the proposed joint model performs better than state-of-art approaches for the document-level task and provides comparable performance for the sentence level task using manifestos from thirteen countries, written in six different languages.
+Election programs (so-called manifestos) are published verbal declaration of the intentions, motives, or views of the political party. Political scientists use manifestos to understand policy-relevant themes  and also quantify a party's position on the left--right spectrum. Rather than handling the two tasks separately, we propose a joint sentence--document model for sentence-level thematic classification and document-level position quantification using manifestos in different languages. In order to handle text from multiple languages we exploit continuous neural embeddings for semantic text representation. We empirically show that the proposed joint model performs better than state-of-art approaches for the document-level task and provides comparable performance for the sentence level task, using manifestos from thirteen countries, written in six different languages.
 \end{abstract}
 %sentence-level
 %\footnote{\url{https://en.wikipedia.org/wiki/Manifesto}} 
@@ -104,7 +104,7 @@ Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party
 % . In  authors worked with CMP dataset to do coarse-level topic classification (defined by CMP). They used Markov Logic Networks (MLN) to model sentence adjacency topic smoothness constraint. 
 % --- RILE, expert survey and voter survey scores 
 Other than the sentence-level labels, the manifesto text also has document-level signals,
-which quantify its position on the left--right spectrum \cite{slapin2008scaling}. Though sentence-level classification and document-level quantification tasks are inter-dependent, existing work handles them separately.  We instead propose a joint sentence--document model to jointly model the two tasks. Overall, the contributions of this work are as follows:
+which quantify its position on the left--right spectrum \cite{slapin2008scaling}. Though sentence-level classification and document-level quantification tasks are inter-dependent, existing work handles them separately.  We instead propose a joint approach to model the two tasks together. Overall, the contributions of this work are as follows:
 \begin{itemize}
 \item we empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at the sentence and document-levels.
 
@@ -353,7 +353,7 @@ Finally, each document is represented by the distribution of words mapped to dif
   \label{tab:al1}
 \end{table}
 
-RILE score regression performance results are given in \tabref{tab:al1}. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual. We evaluate document-level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document-level task, with a comparable performance at sentence-level task. 
+RILE score regression performance results are given in \tabref{tab:al1}. Since \em{CLS} \rm solves it as a classification problem, MSE is not applicable. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual.   We evaluate document-level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document-level task, with a comparable performance at sentence-level task. 
 
 % \subsection{Joint Training}
 % Here we provide results for the joint model, where the sentence model is trained in a semi-supervised way together with document-level regression task. We observed that the jointly trained model did not perform better than cascaded model fine-tuned for document-level task.
@@ -394,7 +394,7 @@ Since the definition of left--right varies between countries, we study the influ
 \end{table}
 
 \section{Conclusion and Future Work}
-In this work we evaluated the utility of a joint sentence--document model for sentence-level thematic classification and document-level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches, where cascaded training can be seen as a special case of joint training. (b) joint-training leverages sentence-level annotations more effectively than cascaded approach for RILE score regression task, with no gains for sentence classification task. There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. Off-the-shelf embeddings leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
+In this work we evaluated the utility of a joint sentence--document model for sentence-level thematic classification and document-level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches; where cascaded training can be seen as a special case of joint training. (b) joint-training leverages sentence-level annotations more effectively than cascaded approach for RILE score regression task, with no gains for sentence classification task. There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. Off-the-shelf embeddings leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
 
 %We used off-the-shelf embeddings, which leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus.
 
