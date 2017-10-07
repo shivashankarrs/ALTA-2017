@@ -39,6 +39,7 @@
 
 
 \newcommand{\eqnref}[2][]{Equation#1~\ref{#2}\xspace}
+\newcommand{\tabref}[2][]{Table#1~\ref{#2}\xspace}
 
 
 %\aclfinalcopy % Uncomment this line for the final submission
@@ -95,7 +96,7 @@ Election programs (so-called manifestos) are published verbal declaration of the
 %Each sentence is segmented if it discusses more than one topic and labeled.
 
 Among many actors, political parties are at the core of contemporary democratic systems. One of the widely used datasets by political scientists is the Comparative
-Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see Table \ref{fig:CMP}).  While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
+Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see \tabref{fig:CMP}).  While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
 %, using a topic hierarchy defined by Dutch political experts
 
 %  is one of the early works using manifesto text for 
@@ -129,7 +130,7 @@ For the document-level quantification task, much work has used label count aggre
 
 \section{Manifesto Text Analysis}
 
-In the CMP, trained annotators manually label manifesto sentences according to the 57 fine-grained political categories (shown in Table \ref{fig:CMP}), which are grouped into seven policy areas: External Relations, Freedom and Democracy, Political System, Economy, Welfare and Quality of Life, Fabric of Society, and Social Groups. Political parties either write their promises as a bulleted list of individual sentences, or structured as paragraphs (an example is given in Figure \ref{fig:sub2}), proving more information on topic coherence. Also the length of documents, measured as the number of sentences, varies greatly between manifestos. The typical length (in sentences) over manifestos (948 in total) from 13 countries --- Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States --- is 516.7$\pm$667. Variance in the number of sentences across documents in conjunction with class imbalance makes automated thematic classification a challenging task.  
+In the CMP, trained annotators manually label manifesto sentences according to the 57 fine-grained political categories (shown in \tabref{fig:CMP}), which are grouped into seven policy areas: External Relations, Freedom and Democracy, Political System, Economy, Welfare and Quality of Life, Fabric of Society, and Social Groups. Political parties either write their promises as a bulleted list of individual sentences, or structured as paragraphs (an example is given in Figure \ref{fig:sub2}), proving more information on topic coherence. Also the length of documents, measured as the number of sentences, varies greatly between manifestos. The typical length (in sentences) over manifestos (948 in total) from 13 countries --- Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States --- is 516.7$\pm$667. Variance in the number of sentences across documents in conjunction with class imbalance makes automated thematic classification a challenging task.  
 
 A sentence is split into multiple segments if it discusses unrelated topics or different aspects of a larger policy, e.g. (as indicated by the different colors, and associated integer labels):
 %(especially RILE quantification)
@@ -144,7 +145,7 @@ A manifesto as a whole can be positioned on the left--right spectrum based on th
 \begin{equation}
 \text{RILE} = \sum_{r \in R} \per_{r} - \sum_{l \in L} \per_{l}
 \end{equation}
-where, $R = \{$104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606$\}$ and $L = \{$103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701$\}$, and $\per_{t}$ denotes the share of each topic $t$ as given in Table \ref{fig:CMP}, per document.  Note that the RILE score is provided for almost all the manifestos in CMP dataset, but the sentence-level annotations are provided only for a subset of manifestos. That is, in some cases, the underlying annotations that the RILE score calculation was based on is often not available for a given manifesto.
+where, $R = \{$104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606$\}$ and $L = \{$103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701$\}$, and $\per_{t}$ denotes the share of each topic $t$ as given in \tabref{fig:CMP}, per document.  Note that the RILE score is provided for almost all the manifestos in CMP dataset, but the sentence-level annotations are provided only for a subset of manifestos. That is, in some cases, the underlying annotations that the RILE score calculation was based on is often not available for a given manifesto.
 %Henceforth, we use `quantification' and `regression' inter-changeably in this document.
 
 
@@ -215,7 +216,7 @@ The proposed architecture evaluates the effectiveness of posing sentence-level t
 
 \section{Experiments}
 \subsection{Setting}
-As mentioned earlier, we use manifestos collected and annotated by political scientists at CMP. In this work, we used digitized manifestos from 13 countries, 948 in total which are written in 6 different languages --- Danish (Denmark), English (Australia, Ireland, New Zealand, South Africa, United Kingdom, United States), Finnish (Finland), French (France), German (Austria, Germany, Switzerland) and Italian (Italy). Out of the 948 manifestos, 235 are annotated with sentence-level labels (from Table \ref{fig:CMP}). We have RILE scores for all the 948 manifestos. Statistics about number of annotated documents and sentences with fine-grained labels across languages is given below.
+As mentioned earlier, we use manifestos collected and annotated by political scientists as part of CMP. In this work, we used 948 manifestos from 13 countries, which are written in 6 different languages --- Danish (Denmark), English (Australia, Ireland, New Zealand, South Africa, United Kingdom, United States), Finnish (Finland), French (France), German (Austria, Germany, Switzerland), and Italian (Italy). Out of the 948 manifestos, 235 are annotated with sentence level labels (from \tabref{fig:CMP}). We have RILE scores for all the 948 manifestos. Statistics about number of annotated documents and sentences across languages are given in \tabref{tab:al}.
  \begin{table}[!htp]
   \centering
   \begin{tabular}{ c c c }
@@ -248,7 +249,7 @@ We first compare traditional bag-of-words discrete representation with distribut
 \item{Language-wise average embedding (\em{AE-NN$_{m}$}):} \rm We build a Neural Network classifier per language, with average neural embedding as sentence representation.
 \end{description}
 
-% Commonly for all empirical evaluation, we compute micro-average performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally.  We compute micro-averaged F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. In the mono-lingual setting (Table \ref{tab:res1}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. 
+% Commonly for all empirical evaluation, we compute micro-average performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally.  We compute micro-averaged F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. In the mono-lingual setting (\tabref{tab:res1}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. 
 
 % \begin{table}[!htp]
 %   \centering
@@ -273,11 +274,15 @@ We first compare traditional bag-of-words discrete representation with distribut
 Since distributed representation allows to leverage text across languages, we evaluate the following approaches with combined training sentences across languages (\em{Cross-lingual}). \rm
 
 \begin{description}
-\item{Convolutional Neural Network (\em{CNN}):} CNN was shown to be effective for cross-lingual manifesto text coarse-level (7 major domains as shown in Table \ref{fig:CMP}) topic classification \cite{W17-2906}. So, we evaluate CNN with a similar architecture --- single convolution layer (32 filters with window size 3), followed by single max pooling layer and finally a softmax layer. We use neural embeddings to represent words.
+\item{Convolutional Neural Network (\em{CNN}):} CNN was shown to be effective for cross-lingual manifesto text coarse-level (7 major domains as shown in \tabref{fig:CMP}) topic classification \cite{W17-2906}. So, we evaluate CNN with a similar architecture --- single convolution layer (32 filters with window size 3), followed by single max pooling layer and finally a softmax layer. We use neural embeddings to represent words.
 \item{Combined average embedding (\em{AE-NN$_{c}$}):} We build a Neural Network classifier with training instances combined across languages, with average neural embedding as sentence representation. This is our proposed approach for sentence-level model.
 \end{description}
 
-Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words. (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
+<<<<<<< HEAD
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in \tabref{tab:al}. In the mono-lingual setting (\tabref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words. (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
+=======
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in \tabref{tab:alx}. In the mono-lingual setting (\tabref{tab:alx}), using word embeddings did not provide better performance compared to bag-of-words. (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
+>>>>>>> bd7e96b892db911843b42cf19e12d0a930ed902a
 
 Under cross-lingual setting, \em{AE-N$N_{c}$} \rm is the sentence-level Neural Network model. We use \em{AE-N$N_{c}$} \rm in the \textit{cascaded training} for obtaining document-level RILE prediction. Note that in \textit{cascaded training}, sentence and document-level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document-level regression task is referred to as \em{JT$_{s}$}\rm. We set  $\alpha$=0.4 (in equation (4)) empirically which gave the best score for both sentence and document-level tasks. We observed a trade-off in performance with different $\alpha$, with lesser $\alpha$ (0.1), document-level correlation increases (to 0.52) while sentence-level F-score decreases (to 0.33). Higher value of $\alpha$ (0.9) gives performance closer to cascaded training. \em{JT$_{s}$} \rm has a comparable performance with \em{AE-NN$_{c}$}. \rm It must be considered that the (sentence and document-level) model built using cascaded training is a special case of jointly trained model, with suitable values of $\alpha$ (closer to 1). Also \em{CNN}, \em{AE-NN}$_{c}$ and \em{JT}$_{s}$ \rm use combined training instances across languages compared to other approaches. Except for $da$ and $it$ cross-lingual training performs better than mono-lingual setting. Overall, the proposed approach shows slight improvement over baseline approaches for sentence classification task.
 %Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches.
@@ -307,7 +312,7 @@ Avg.    & 0.32 & 0.34 & 0.35 & 0.34 & \textbf{0.36} & 0.35\\
 
   \end{tabular}
   \caption{Micro-Averaged F-measure. Best scores are given in bold under each language setting}
-  \label{tab:al}
+  \label{tab:alx}
 \end{table*}
 
 \subsection{Document-Level Regression}
@@ -352,7 +357,7 @@ Finally, each document is represented by the distribution of words mapped to dif
   \label{tab:al1}
 \end{table}
 
-RILE score regression performance results are given in Table \ref{tab:al1}. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual. We evaluate document-level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document-level task, with a comparable performance at sentence-level task. 
+RILE score regression performance results are given in \tabref{tab:al1}. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual. We evaluate document-level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document-level task, with a comparable performance at sentence-level task. 
 
 % \subsection{Joint Training}
 % Here we provide results for the joint model, where the sentence model is trained in a semi-supervised way together with document-level regression task. We observed that the jointly trained model did not perform better than cascaded model fine-tuned for document-level task.
@@ -376,7 +381,7 @@ We measure the importance of annotated text at sentence and document-level for R
  \end{figure}
  
 \subsection{Use of Country Information}
-Since the definition of left--right varies between countries, we study the influence of \textit{country} information in the proposed model with \textit{joint-training}. We use two ways to incorporate country information \cite{hoang2016incorporating}: (a) \textit{stack} --- one-hot encoding (13 countries, 1 X 13 vector) of each manifesto's \textit{country} is concatenated with hidden representation of the document ($S_{r}$ in Figure \ref{fig:HNN}) (b) \textit{non-linear stack} --- one-hot-encoded country vector is passed through a hidden layer with $\tanh$ non-linear activation and concatenated with $S_{r}$. With both the models we observed mild improvement in correlation (given in Table \ref{tab:al2}).
+Since the definition of left--right varies between countries, we study the influence of \textit{country} information in the proposed model with \textit{joint-training}. We use two ways to incorporate country information \cite{hoang2016incorporating}: (a) \textit{stack} --- one-hot encoding (13 countries, 1 X 13 vector) of each manifesto's \textit{country} is concatenated with hidden representation of the document ($S_{r}$ in Figure \ref{fig:HNN}) (b) \textit{non-linear stack} --- one-hot-encoded country vector is passed through a hidden layer with $\tanh$ non-linear activation and concatenated with $S_{r}$. With both the models we observed mild improvement in correlation (given in \tabref{tab:al2}).
 
  \begin{table}[t!]
   \centering
