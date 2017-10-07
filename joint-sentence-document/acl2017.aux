@@ -39,25 +39,29 @@
 \citation{daubler2012natural}
 \citation{biessmann2016automating,W17-2906}
 \citation{cat}
+\newlabel{eq:sent-loss}{{2}{3}{Sentence-level Model}{equation.4.2}{}}
+\newlabel{eq:doc-loss}{{4}{3}{Joint Sentence--Document Model}{equation.4.4}{}}
+\newlabel{eq:joint-loss}{{5}{3}{Joint Sentence--Document Model}{equation.4.5}{}}
 \citation{DBLP:journals/corr/KingmaB14}
 \citation{ammar2016massively}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:HNN}{{1}{4}{Hierarchical Neural Network for Joint Sentence--Document Analysis. $s_{1}$, $s_{2}$,...$s_{n}$ are input sentences, $W_{s}$ and $W_{p}$ are shared across unrolled sentences. $\hat {Y}_{s_{i}}$ denotes 57 classes and $\hat {y}_{d}$ denotes the estimated RILE score\relax }{figure.caption.1}{}}
+\newlabel{tab:al}{{1}{4}{Statistics of dataset, `Ann.' refers to annotated. \textit {da - Danish, en - English, fi - Finnish, fr - French, de - German, it - Italian}\relax }{table.caption.2}{}}
 \citation{biessmann2016automating}
 \citation{W17-2906}
-\newlabel{tab:al}{{1}{5}{Statistics of dataset, `Ann.' refers to annotated. \textit {da - Danish, en - English, fi - Finnish, fr - French, de - German, it - Italian}\relax }{table.caption.2}{}}
 \citation{EACL}
 \citation{EACL}
+\newlabel{tab:al}{{2}{6}{Micro-Averaged F-measure. Best scores are given in bold under each language setting\relax }{table.caption.3}{}}
+\newlabel{tab:al1}{{3}{6}{RILE score prediction performance. Best scores are given in bold (higher is better for $r$, and lower is better for MSE).\relax }{table.caption.4}{}}
 \citation{hoang2016incorporating}
-\newlabel{tab:al}{{2}{7}{Micro-Averaged F-measure. Best scores are given in bold under each language setting\relax }{table.caption.3}{}}
-\newlabel{fig:sentl}{{2}{7}{Fixing 80\% training documents with RILE score, ratio of documents with sentence level annotations is varied. \begin {small} $\markera $ \end {small} denotes \em {Cas}$_{d}$ \rm and \begin {small} $\markerb $ \end {small} denotes \em {JT}$_{d}$\relax }{figure.caption.5}{}}
-\newlabel{tab:al1}{{3}{7}{RILE score prediction performance. Best scores are given in bold. \begin {small}CLS assigns -1 and +1 for extreme manifestos and propagates the values on a graph. Since they solve it as a classification problem, MSE is not applicable. $\uparrow $ indicates higher is better, $\downarrow $ indicates lower is better\end {small}\relax }{table.caption.4}{}}
-\newlabel{fig:docl}{{3}{7}{Fixing 80\% training documents with sentence level annotations, ratio of documents with RILE score is varied. \begin {small} $\markera $ \end {small} denotes \em {Cas}$_{d}$ \rm and \begin {small} $\markerb $ \end {small} denotes \em {JT}$_{d}$\relax }{figure.caption.6}{}}
-\newlabel{tab:al2}{{4}{7}{RILE score prediction performance with \textit {country} information. Difference compared to $JT_{d}$ is given within paranthesis. $\uparrow $ -- improvement, $\downarrow $ -- decrease in performance\relax }{table.caption.7}{}}
 \bibdata{acl2017}
 \bibcite{akoglu2014quantifying}{{1}{2014}{{Akoglu}}{{}}}
 \bibcite{ammar2016massively}{{2}{2016}{{Ammar et~al.}}{{Ammar, Mulcaire, Tsvetkov, Lample, Dyer, and Smith}}}
 \bibcite{bakliwal2013sentiment}{{3}{2013}{{Bakliwal et~al.}}{{Bakliwal, Foster, van~der Puil, O'Brien, Tounsi, and Hughes}}}
+\newlabel{fig:sentl}{{2}{7}{Fixing 80\% training documents with RILE score, ratio of documents with sentence-level annotations is varied. \begin {small} $\markera $ \end {small} denotes \em {Cas}$_{d}$ \rm and \begin {small} $\markerb $ \end {small} denotes \em {JT}$_{d}$\relax }{figure.caption.5}{}}
+\newlabel{fig:docl}{{3}{7}{Fixing 80\% training documents with sentence-level annotations, ratio of documents with RILE score is varied. \begin {small} $\markera $ \end {small} denotes \em {Cas}$_{d}$ \rm and \begin {small} $\markerb $ \end {small} denotes \em {JT}$_{d}$\relax }{figure.caption.6}{}}
+\newlabel{tab:al2}{{4}{7}{RILE score prediction performance with \textit {country} information. Difference compared to $JT_{d}$ is given within paranthesis. $\uparrow $ -- improvement, $\downarrow $ -- decrease in performance\relax }{table.caption.7}{}}
+\newlabel{fig:CMP}{{5}{8}{\textit {Left} topics are given in \textit {\color {red}red} and \textit {right} topics are given in \textit {\color {blue}blue}\relax }{table.caption.9}{}}
 \bibcite{benoit2014putting}{{4}{2014}{{Benoit and D{\"a}ubler}}{{}}}
 \bibcite{biessmann2016automating}{{5}{2016}{{Biessmann}}{{}}}
 \bibcite{2017arXiv170704737B}{{6}{2017}{{{Bruinsma} and {Gemenis}}}{{}}}
@@ -81,9 +85,8 @@
 \bibcite{slapin2008scaling}{{24}{2008}{{Slapin and Proksch}}{{}}}
 \bibcite{sridhar2014collective}{{25}{2014}{{Sridhar et~al.}}{{Sridhar, Getoor, and Walker}}}
 \bibcite{verberne2014automatic}{{26}{2014}{{Verberne et~al.}}{{Verberne, D'hondt, van~den Bosch, and Marx}}}
-\bibcite{CMP}{{27}{2011}{{Volkens et~al.}}{{Volkens, Lacewell, and Pola~Lehmann}}}
 \newlabel{fig:sub2}{{4}{9}{Democratic Party of USA, 2000 --- $\int $ denotes sentence segment. 601 - National Way of Life: Positive, 606 - Civic Mindedness: Positive, 410 - Economic Growth: Positive, 305: Political Authority\relax }{figure.caption.8}{}}
-\newlabel{fig:CMP}{{5}{9}{\textit {Left} topics are given in \textit {\color {red}red} and \textit {right} topics are given in \textit {\color {blue}blue}\relax }{table.caption.9}{}}
+\bibcite{CMP}{{27}{2011}{{Volkens et~al.}}{{Volkens, Lacewell, and Pola~Lehmann}}}
 \bibcite{zhou2011classifying}{{28}{2011}{{Zhou et~al.}}{{Zhou, Resnick, and Mei}}}
 \bibcite{zirn2016classifying}{{29}{2016}{{Zirn et~al.}}{{Zirn, Glava{\v {s}}, Nanni, Eichorts, and Stuckenschmidt}}}
 \bibstyle{acl_natbib}

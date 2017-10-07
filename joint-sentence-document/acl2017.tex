@@ -28,10 +28,18 @@
 \usepackage{mathtools}
 \newcommand{\myMatrix}[1]{\bm{\mathit{#1}}}
 \usepackage[bottom]{footmisc}
+\usepackage{amsmath}
+\usepackage{xspace}
 
 
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
 %\usepackage[draft]{hyperref}
+
+\DeclareMathOperator{\per}{per}
+
+
+\newcommand{\eqnref}[2][]{Equation#1~\ref{#2}\xspace}
+
 
 %\aclfinalcopy % Uncomment this line for the final submission
 %\def\aclpaperid{***} %  Enter the acl Paper ID here
@@ -69,12 +77,12 @@
 
 
 \begin{abstract}
-Election programs (so-called manifestos) are published verbal declaration of the intentions, motives, or views of the political party. Political scientists use manifestos to understand policy-relevant themes  and also quantify a party's position on the left--right spectrum. Rather than handling the two tasks separately, we propose a joint sentence--document model for sentence level thematic classification and document level position quantification using manifestos in different languages. In order to handle text from multiple languages we exploit continuous neural embeddings for semantic text representation. We empirically show that the proposed joint model performs better than state-of-art approaches for the document level task using manifestos from thirteen countries, written in six different languages.
+Election programs (so-called manifestos) are published verbal declaration of the intentions, motives, or views of the political party. Political scientists use manifestos to understand policy-relevant themes  and also quantify a party's position on the left--right spectrum. Rather than handling the two tasks separately, we propose a joint sentence--document model for sentence-level thematic classification and document-level position quantification using manifestos in different languages. In order to handle text from multiple languages we exploit continuous neural embeddings for semantic text representation. We empirically show that the proposed joint model performs better than state-of-art approaches for the document-level task using manifestos from thirteen countries, written in six different languages.
 \end{abstract}
-%sentence level
+%sentence-level
 %\footnote{\url{https://en.wikipedia.org/wiki/Manifesto}} 
 %Political parties are essential institutions of democracy.
-% Secondly, all the works use manually coded thematic category distribution at sentence level as features for document level quantification task. Whereas, in this work we evaluate the effectiveness of using text for quantification task.
+% Secondly, all the works use manually coded thematic category distribution at sentence-level as features for document-level quantification task. Whereas, in this work we evaluate the effectiveness of using text for quantification task.
 
 \section{Introduction}
 
@@ -87,7 +95,7 @@ Election programs (so-called manifestos) are published verbal declaration of the
 %Each sentence is segmented if it discusses more than one topic and labeled.
 
 Among many actors, political parties are at the core of contemporary democratic systems. One of the widely used datasets by political scientists is the Comparative
-Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see Table \ref{fig:CMP}).  While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
+Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see Table \ref{fig:CMP}).  While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
 %, using a topic hierarchy defined by Dutch political experts
 
 %  is one of the early works using manifesto text for 
@@ -97,7 +105,7 @@ Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party
 Other than the sentence-level labels, the manifesto text also has document-level signals,
 which quantify its position on the left--right spectrum \cite{slapin2008scaling}. Though sentence-level classification and document-level quantification tasks are inter-dependent, existing work handles them separately.  We instead propose a joint sentence--document model to jointly model the two tasks. Overall, the contributions of this work are as follows:
 \begin{itemize}
-\item we empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at the sentence and document levels.
+\item we empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at the sentence and document-levels.
 
 \item we evaluate the effectiveness of modelling the sentence- and document-level tasks together.
 
@@ -132,70 +140,82 @@ We need to address our close ties with our neighbours (107) \color{blue} as well
 Such examples are not common, however.\footnote{In \newcite{daubler2012natural}, based on a sample of 15 manifestos, the authors noted that around 7.7\% of sentences encode multiple topics.} Also the segmentation was shown to be inconsistent and to have no effect on quantifying the proportion of sentences discussing various topics and document-level regression tasks \cite{daubler2012natural}. Hence, consistent with previous work \cite{biessmann2016automating, W17-2906}, we consider the sentence-level classification to be a multi-class single-label problem. We use the segmented text when available (especially for evaluation), and complete sentences otherwise.
 % TJB; how do you determine the label in cases of ambiguity?
 
-A manifesto as a whole can be positioned on the left--right spectrum based on the proportion of topics discussed. We use the RILE score, which is defined as the difference between count of sentences discussing left and right topics \cite{cat}, 
+A manifesto as a whole can be positioned on the left--right spectrum based on the proportion of topics discussed. We use the RILE score, which is defined as the difference between the count of sentences discussing left- and right-leaning topics \cite{cat}:
 \begin{equation}
-RILE = \sum_{r \in R} per_{r} - \sum_{l \in L} per_{l}
+\text{RILE} = \sum_{r \in R} \per_{r} - \sum_{l \in L} \per_{l}
 \end{equation}
-where, R = \{104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606\} and L = \{103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701\}, ``$per_{t}$'' denotes share of each topic (t) as given in Table \ref{fig:CMP}, per document.  Note that the RILE score is provided almost for all the manifestos in CMP dataset, but the sentence level annotations are provided only for a subset of manifestos. 
+where, $R = \{$104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606$\}$ and $L = \{$103, 105, 106, 107, 202, 403, 404, 406, 412, 413, 504, 506, 701$\}$, and $\per_{t}$ denotes the share of each topic $t$ as given in Table \ref{fig:CMP}, per document.  Note that the RILE score is provided for almost all the manifestos in CMP dataset, but the sentence-level annotations are provided only for a subset of manifestos. That is, in some cases, the underlying annotations that the RILE score calculation was based on is often not available for a given manifesto.
 %Henceforth, we use `quantification' and `regression' inter-changeably in this document.
 
+
+
 \section{Proposed Approach}
-We propose a joint sentence--document model to classify manifesto sentences into one out of 57 categories and also quantify document level RILE score. The joint formulation is not only to capture the task inter-dependencies but also to use annotations at different levels of granularity (sentence and document) effectively --- RILE score is available for 948 digitized manifestos from 13 countries, whereas sentence level annotations are available only for 235 manifestos. We use a Hierarchical Neural Network for modeling sentence level classification and document level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use neural embeddings to represent words ($e_{w}$). We refer to the total set of manifestos available for training as $D$, subset of it which are annotated with sentence level labels as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}$, $s_{2}$, ..., $s_{l_{d}}$. 
+
+We propose a joint sentence--document model to classify manifesto sentences into one out of 57 categories and also quantify the document-level RILE score. The joint formulation is not only to capture the task inter-dependencies, but also to use annotations at different levels of granularity (sentence and document) effectively --- a RILE score is available for 948 manifestos from 13 countries, whereas sentence-level annotations are available only for 235 manifestos. We use a neural network to model the sentence-level classification and document-level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use multi-lingual embeddings to represent words ($e_{w}$). We refer to the total set of manifestos available for training as $D$, and the subset which is annotated with sentence-level labels as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}, s_{2}, ..., s_{l_{d}}$. 
 
 %from 13 countries ---  Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States,
 
-\begin{figure*}[!ht]
+\begin{figure*}[!t]
 \centering
 \includegraphics[height=8.4cm, scale=1.4]{ALTA_Model.pdf}
 \caption{Hierarchical Neural Network for Joint Sentence--Document Analysis. $s_{1}$, $s_{2}$,...$s_{n}$ are input sentences, $W_{s}$ and $W_{p}$ are shared across unrolled sentences. $\hat{Y}_{s_{i}}$ denotes  57 classes and $\hat{y}_{d}$ denotes the estimated RILE score}
  \label{fig:HNN}
  \end{figure*}
 
-\subsection{Sentence Level Model}
-We represent each sentence using average embedding of its constituent words, $ \bm{s}_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e_{w}$.
-The average embedding representation is given as input to hidden layer with rectified linear activation units (ReLU) to get the hidden representation, which is defined as \[H_{s_{i}}= \max(0,a)\] where, $a = W_{s}^\top \bm{s}_{i}$. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives probability of 57 classes as output.
-\[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^\top w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^\top w_{pj}}}}\]
-We use cross-entropy loss function for sentence level model. For sentences in $D_{s}$, with ground truth labels $Y_{s}$ (one-of-K encoding), the loss function is given as follows
-\begin{equation}
-L_{S}(D_{s},Y_{s})=-\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_{j=1}^{l_{d_{i}}}\sum_{k=1}^{K} Y_{s_{ijk}} \ln \hat{Y}_{s_{ijk}}  
-\end{equation}
+\subsection{Sentence-level Model}
+We represent each sentence using the average embedding of its constituent words, $ \bm{s}_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e_{w}$.
+The average embedding representation is given as input to hidden layer with rectified linear activation units (ReLU) to get the hidden representation. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives probability of 57 classes as output.
+%\[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^\top w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^\top w_{pj}}}}\]
+% TJB: not worth defining softmax (as discussed!) ... similarly for ReLU
+We use cross-entropy loss function for sentence-level model. For sentences in $D_{s}$, with ground truth labels $Y_{s}$ (one-of-K encoding), the loss function is given as follows:
+  \begin{multline}
+    \label{eq:sent-loss}
+    L_{S}(D_{s},Y_{s})= \\
+    -\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_{j=1}^{l_{d_{i}}}\sum_{k=1}^{K} Y_{s_{ijk}} \log \hat{Y}_{s_{ijk}}  
+  \end{multline}
 %\footnote{\url{https://keras.io/layers/wrappers/\#timedistributed}%}
+
 \subsection{Joint Sentence--Document Model}
-Using the Hierarchical Neural Network, we model both sentence level classification and document level regression tasks together. In the combined model, we use unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($1$ to $n$). We use average-pooling with concatenated hidden representation ($H_{s}$) and predicted output distribution ($\hat{Y}_{s}$) of individual sentences, to represent a document.\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution.}
-\[ S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] \]
-RILE varies from -100 to +100, we scale it to a range between -1 and +1. So, we use $\tanh$ layer finally to get regressed output with $z = W_{r}^\top H_{d}$, where $H_{d}$ = ReLU$(W_{d}^\top S_{r})$, as input.
-\[ \hat{y}_{d} = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
-Since it is a regression task, we minimize mean-squared error loss function between the predicted $\hat{y}_{d}$ and actual rile score $y_{d}$. With the given RILE scores for training documents ($Y_{d}$) and estimated scores ($\hat{Y}_{d}$), the loss function is given as follows,
+Using the neural network, we model the sentence-level classification and document-level regression tasks together. In the joint model, we use an unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($1$ to $n$). We use average-pooling with the concatenated hidden representations ($H_{s}$) and predicted output distributions ($\hat{Y}_{s}$) of individual sentences, to represent a document.\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution.}
+\begin{equation}
+ S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] 
+\end{equation}
+Since the range of RILE is $[-100,100]$, we scale it to the range $[-1,1]$ based on a final $\tanh$ layer, with $z = W_{r}^\top H_{d}$, where $H_{d}$ = ReLU$(W_{d}^\top S_{r})$, as input.
+%\[ \hat{y}_{d} = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
+Since it is a regression task, we minimize the mean-squared error loss function between the predicted $\hat{y}_{d}$ and actual RILE score $y_{d}$. With the given RILE scores for training documents ($Y_{d}$) and estimated scores ($\hat{Y}_{d}$), the loss function is given as follows:
 %\sum_{d=1}^{D}
 \begin{equation}
 L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^\top (\hat{Y}_{d} - Y_{d}).
+\label{eq:doc-loss}
 \end{equation}
 
-Overall, the combined loss function using (2) and (3) for the joint model is,
+Overall, the loss function for the joint model, combining \eqnref[s]{eq:sent-loss} and \ref{eq:doc-loss}, is:
 \begin{equation}
- \alpha \times L_{s}(D_{s},Y_{s}) + (1-\alpha) \times L_{d}(\hat{Y}_{d}, Y_{d})
+ \alpha L_{s}(D_{s},Y_{s}) + (1-\alpha) L_{d}(\hat{Y}_{d}, Y_{d})
+ \label{eq:joint-loss}
 \end{equation}
 where $0 \le \alpha \le 1$.
 %\footnote{http://128.2.220.95/multilingual}
-%\footnote{we use $\lambda$=1, since we give the same priority to sentence and document level tasks} 
-We evaluate both cascaded and joint training for this objective function. We use Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
+%\footnote{we use $\lambda$=1, since we give the same priority to sentence and document-level tasks} 
+We evaluate both cascaded and joint training for this objective function:
 \begin{description}
-\item{Cascaded Training:} In this approach sentence level model is trained using $D_{s}$, to minimize $L_{s}(D_{s},Y_{s})$ in (2), and the pre-trained model is used to obtain document level representation $S_{r}$ for all the manifestos in training set, $D$. Then the document level regression task is trained to minimize $L_{d}(\hat{Y}_{d}, Y_{d})$ in (3). Here, the sentence level model parameters are fixed when the document level regression model is trained using $S_{r}$.
+\item{\textbf{Cascaded Training}:} The sentence-level model is trained using $D_{s}$, to minimize $L_{s}(D_{s},Y_{s})$ in \eqnref{eq:sent-loss}, and the pre-trained model is used to obtain document-level representation $S_{r}$ for all the manifestos in training set $D$. Then the document-level regression task is trained to minimize $L_{d}(\hat{Y}_{d}, Y_{d})$ from \eqnref{eq:doc-loss}. Here, the sentence-level model parameters are fixed when the document-level regression model is trained using $S_{r}$.
 
-\item{Joint Training:} Like in cascaded training, sentence level model is pre-trained using labeled sentences. Then the entire network is updated by minimizing the joint loss function (4). Here the sentence level model uses both labeled and unlabeled data, where the updates using unlabeled data is influenced by document level objective.
+\item{\textbf{Joint Training}:} As in cascaded training, the sentence-level model is pre-trained using labeled sentences. Then the entire network is updated by minimizing the joint loss function from \eqnref{eq:joint-loss}. Here the sentence-level model uses both labeled and unlabeled data.
 \end{description}
 
-%again, the sentence level model is trained using $D_{s}$, to minimize $L_{d}(D_{s},Y_{g})$. Then
+%again, the sentence-level model is trained using $D_{s}$, to minimize $L_{d}(D_{s},Y_{g})$. Then
+We use the Adam optimizer \cite{DBLP:journals/corr/KingmaB14} for parameter estimation. 
 
-The proposed architecture evaluates the effectiveness of posing sentence-level topic classification as a precursor to solve document level RILE prediction, rather than learning a model directly.  We also study the effect of quantity of annotated text at both sentence and document level for RILE prediction task. 
+The proposed architecture evaluates the effectiveness of posing sentence-level topic classification as a precursor to perform document-level RILE prediction, rather than learning a model directly.  We also study the effect of the quantity of annotated text at both the sentence- and document-level for the RILE prediction task. 
 
-%Finally, the document level RILE score estimation can be replaced with any other task in the proposed architecture --- expert survey or voter survey scores.
+%Finally, the document-level RILE score estimation can be replaced with any other task in the proposed architecture --- expert survey or voter survey scores.
 
-%Secondly, we also study the utility of having more document level annotations --- one-dimensional scores on the left--right spectrum, compared to sentence level annotations, especially for sentence level thematic classification task. 
+%Secondly, we also study the utility of having more document-level annotations --- one-dimensional scores on the left--right spectrum, compared to sentence-level annotations, especially for sentence-level thematic classification task. 
 
 \section{Experiments}
 \subsection{Setting}
-As mentioned earlier, we use manifestos collected and annotated by political scientists at CMP. In this work, we used digitized manifestos from 13 countries, 948 in total which are written in 6 different languages --- Danish (Denmark), English (Australia, Ireland, New Zealand, South Africa, United Kingdom, United States), Finnish (Finland), French (France), German (Austria, Germany, Switzerland) and Italian (Italy). Out of the 948 manifestos, 235 are annotated with sentence level labels (from Table \ref{fig:CMP}). We have RILE scores for all the 948 manifestos. Statistics about number of annotated documents and sentences with fine-grained labels across languages is given below.
+As mentioned earlier, we use manifestos collected and annotated by political scientists at CMP. In this work, we used digitized manifestos from 13 countries, 948 in total which are written in 6 different languages --- Danish (Denmark), English (Australia, Ireland, New Zealand, South Africa, United Kingdom, United States), Finnish (Finland), French (France), German (Austria, Germany, Switzerland) and Italian (Italy). Out of the 948 manifestos, 235 are annotated with sentence-level labels (from Table \ref{fig:CMP}). We have RILE scores for all the 948 manifestos. Statistics about number of annotated documents and sentences with fine-grained labels across languages is given below.
  \begin{table}[!htp]
   \centering
   \begin{tabular}{ c c c }
@@ -217,8 +237,8 @@ As mentioned earlier, we use manifestos collected and annotated by political sci
   \label{tab:al}
 \end{table}
 
-We use off-the-shelf multi-lingual word embeddings\footnote{\url{http://128.2.220.95/multilingual}} to represent words. We chose embeddings trained using translation invariance approach \cite{ammar2016massively}, with size 512 for our work, since we found it empirically better compared to other approaches. The Neural Network model has a single hidden layer for all the sentence and document level approaches. 
-\subsection{Sentence Level Classification}
+We use off-the-shelf multi-lingual word embeddings\footnote{\url{http://128.2.220.95/multilingual}} to represent words. We chose embeddings trained using translation invariance approach \cite{ammar2016massively}, with size 512 for our work, since we found it empirically better compared to other approaches. The Neural Network model has a single hidden layer for all the sentence and document-level approaches. 
+\subsection{Sentence-Level Classification}
 We first compare traditional bag-of-words discrete representation with distributed neural representation for words for fine-grained thematic classification, under mono-lingual training setting (\em{Mono-lingual}). \rm Hence we compare the following approaches. 
 %Following are the sentence classification baseline techniques that we compare our proposed approach against.
 
@@ -228,7 +248,7 @@ We first compare traditional bag-of-words discrete representation with distribut
 \item{Language-wise average embedding (\em{AE-NN$_{m}$}):} \rm We build a Neural Network classifier per language, with average neural embedding as sentence representation.
 \end{description}
 
-% Commonly for all empirical evaluation, we compute micro-average performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally.  We compute micro-averaged F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. In the mono-lingual setting (Table \ref{tab:res1}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. 
+% Commonly for all empirical evaluation, we compute micro-average performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally.  We compute micro-averaged F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. In the mono-lingual setting (Table \ref{tab:res1}), using word embeddings provides better performance compared to bag-of-words for en, fi, de and it. 
 
 % \begin{table}[!htp]
 %   \centering
@@ -257,9 +277,9 @@ Since distributed representation allows to leverage text across languages, we ev
 \item{Combined average embedding (\em{AE-NN$_{c}$}):} We build a Neural Network classifier with training instances combined across languages, with average neural embedding as sentence representation. This is our proposed approach for sentence-level model.
 \end{description}
 
-Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document level), where the 80\% split also contains sentence level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words. (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
+Commonly for all empirical evaluation, we compute micro-averaged performance with 80-20\% train-test ratio across 10 runs with random split (at document-level), where the 80\% split also contains sentence-level annotated documents proportionally. Optimal model parameters we found for the proposed model (Figure \ref{fig:HNN}) are $\norm{H_{s}}$ = 300, $\norm{H_{d}}$ = 10. We compute F-score\footnote{Harmonic mean of precision and recall, \url{https://en.wikipedia.org/wiki/F1_score}} to evaluate sentence classification performance. Sentence classification performance is given in Table \ref{tab:al}. In the mono-lingual setting (Table \ref{tab:al}), using word embeddings did not provide better performance compared to bag-of-words. (except for $en$ which was the source language for obtaining multi-lingual embeddings). 
 
-Under cross-lingual setting, \em{AE-N$N_{c}$} \rm is the sentence level Neural Network model. We use \em{AE-N$N_{c}$} \rm in the \textit{cascaded training} for obtaining document level RILE prediction. Note that in \textit{cascaded training}, sentence and document level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document level regression task is referred to as \em{JT$_{s}$}\rm. We set  $\alpha$=0.4 (in equation (4)) empirically which gave the best score for both sentence and document level tasks. We observed a trade-off in performance with different $\alpha$, with lesser $\alpha$ (0.1), document level correlation increases (to 0.52) while sentence level F-score decreases (to 0.33). Higher value of $\alpha$ (0.9) gives performance closer to cascaded training. \em{JT$_{s}$} \rm has a comparable performance with \em{AE-NN$_{c}$}. \rm It must be considered that the (sentence and document level) model built using cascaded training is a special case of jointly trained model, with suitable values of $\alpha$ (closer to 1). Also \em{CNN}, \em{AE-NN}$_{c}$ and \em{JT}$_{s}$ \rm use combined training instances across languages compared to other approaches. Except for $da$ and $it$ cross-lingual training performs better than mono-lingual setting. Overall, the proposed approach shows slight improvement over baseline approaches for sentence classification task.
+Under cross-lingual setting, \em{AE-N$N_{c}$} \rm is the sentence-level Neural Network model. We use \em{AE-N$N_{c}$} \rm in the \textit{cascaded training} for obtaining document-level RILE prediction. Note that in \textit{cascaded training}, sentence and document-level models are trained separately in a cascaded fashion. Joint-training results where the sentence model is trained in a semi-supervised way together with document-level regression task is referred to as \em{JT$_{s}$}\rm. We set  $\alpha$=0.4 (in equation (4)) empirically which gave the best score for both sentence and document-level tasks. We observed a trade-off in performance with different $\alpha$, with lesser $\alpha$ (0.1), document-level correlation increases (to 0.52) while sentence-level F-score decreases (to 0.33). Higher value of $\alpha$ (0.9) gives performance closer to cascaded training. \em{JT$_{s}$} \rm has a comparable performance with \em{AE-NN$_{c}$}. \rm It must be considered that the (sentence and document-level) model built using cascaded training is a special case of jointly trained model, with suitable values of $\alpha$ (closer to 1). Also \em{CNN}, \em{AE-NN}$_{c}$ and \em{JT}$_{s}$ \rm use combined training instances across languages compared to other approaches. Except for $da$ and $it$ cross-lingual training performs better than mono-lingual setting. Overall, the proposed approach shows slight improvement over baseline approaches for sentence classification task.
 %Also \textit{CNN}, $AE$-$NN_{c}$ and \textit{$JT_{s}$} use combined training instances across languages compared to other approaches.
 %Hence other than en and de which have sufficient labeled data, models that use combined training data perform better. %Since the number of documents are not many compared to sentences, joint training 
 %\clearpage
@@ -290,8 +310,8 @@ Avg.    & 0.32 & 0.34 & 0.35 & 0.34 & \textbf{0.36} & 0.35\\
   \label{tab:al}
 \end{table*}
 
-\subsection{Document Level Regression}
-For document level regression task, following are the baseline approaches. Note that we use $\tanh$ output for all the models, since the range of re-scaled RILE is from -1 to +1.
+\subsection{Document-Level Regression}
+For document-level regression task, following are the baseline approaches. Note that we use $\tanh$ output for all the models, since the range of re-scaled RILE is from -1 to +1.
 
 % with \textit{tanh} output.
 \begin{description}
@@ -304,12 +324,12 @@ For document level regression task, following are the baseline approaches. Note 
 \[ cluster (word) = \argmin_k dist(C_{k}, word) \]
 Finally, each document is represented by the distribution of words mapped to different clusters (1 X $K$ vector). We use a Neural Network regression model with bag-of-centroids representation. Results with $K$=1000, which performed best is given in Table 3.
 
-\item{Sentence level model and RILE formulation (\em{AE-NN}$_{c}^{rile}$)}: Here the predictions of sentence level model (\em{AE-NN$_{c}$}) \rm are used directly with RILE formulation (equation (1)) to derive RILE score for manifestos.
+\item{sentence-level model and RILE formulation (\em{AE-NN}$_{c}^{rile}$)}: Here the predictions of sentence-level model (\em{AE-NN$_{c}$}) \rm are used directly with RILE formulation (equation (1)) to derive RILE score for manifestos.
 
 \item{Cross-lingual scaling (\em{CLS}):} This is a recent unsupervised approach for cross-lingual political speech text positioning task \cite{EACL}. Authors use average word-embeddings weighed by TF-IDF score to represent documents.\footnote{We use this aggregate representation since it was shown to be better than word alignment and scoring approach \cite{EACL}} Then a graph is constructed using pair-wise distance of documents. Given two pivots texts for extreme left and right positions [-1, +1], label propagation approach is used to quantify other documents in the graph.
 \end{description}
 
- \begin{table}[!b]
+ \begin{table}[!t]
   \centering
   \begin{tabular}{ c c c }
   \toprule
@@ -327,37 +347,38 @@ Finally, each document is represented by the distribution of words mapped to dif
     \em{JT}$_{d}$ &  \textbf{0.044} & \textbf{0.47} \\
     \bottomrule
   \end{tabular}
-  \caption{RILE score prediction performance. Best scores are given in bold. \begin{small}CLS assigns -1 and +1 for extreme manifestos and propagates the values on a graph. Since they solve it as a classification problem, MSE is not applicable. $\uparrow$ indicates higher is better, $\downarrow$ indicates lower is better\end{small}}
+  \caption{RILE score prediction performance. Best scores are given in bold %CLS assigns -1 and +1 for extreme manifestos and propagates the values on a graph. Since they solve it as a classification problem, MSE is not applicable. 
+(higher is better for $r$, and lower is better for MSE).}
   \label{tab:al1}
 \end{table}
 
-RILE score regression performance results are given in Table \ref{tab:al1}. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual. We evaluate document level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document level task, with a comparable performance at sentence level task. 
+RILE score regression performance results are given in Table \ref{tab:al1}. Other than \em{BoW-NN$_{d}$} \rm all other approaches are cross-lingual. We evaluate document-level performance using mean-squared-error (MSE) and Pearson correlation ($r$). The proposed approach's performance, using cascaded training  is referred to as \em{Cas}$_{d}$ \rm and jointly trained model is referred to as \em{JT}$_{d}$. \rm Overall the jointly trained model performs best for document-level task, with a comparable performance at sentence-level task. 
 
 % \subsection{Joint Training}
-% Here we provide results for the joint model, where the sentence model is trained in a semi-supervised way together with document level regression task. We observed that the jointly trained model did not perform better than cascaded model fine-tuned for document level task.
+% Here we provide results for the joint model, where the sentence model is trained in a semi-supervised way together with document-level regression task. We observed that the jointly trained model did not perform better than cascaded model fine-tuned for document-level task.
 
 \subsection{Quantity of Annotation}
-We measure the importance of annotated text at sentence and document level for RILE score regression task. We vary the percentage of labeled data, while keeping the test sample size at 20\% as before. In the first setting, we keep the training ratio of documents at 80\%, within that 80\% we increase the proportion of documents with sentence level annotations --- from 0 (document average embedding setting, \em{AE-NN}$_{d}$) \rm to 80\%. Results are given in Figure \ref{fig:sentl}. Similarly, in the other setting, we keep the training set with 80\% sentence level annotated documents (which is $\sim$20\% of the total data), and add documents (with only RILE score), increasing the training set from 20 to 80\%. Results of this study are given in Figure \ref{fig:docl}. We observed that, jointly-trained model uses sentence level annotations more effectively than cascaded approach (Figure \ref{fig:sentl}) --- even with less sentence level annotations. Also, with less document level signal (up to 40\%) for training, both the approaches perform similarly ($r$). As the training ratio increases, joint-training leverages both sentence and document level signals effectively.
+We measure the importance of annotated text at sentence and document-level for RILE score regression task. We vary the percentage of labeled data, while keeping the test sample size at 20\% as before. In the first setting, we keep the training ratio of documents at 80\%, within that 80\% we increase the proportion of documents with sentence-level annotations --- from 0 (document average embedding setting, \em{AE-NN}$_{d}$) \rm to 80\%. Results are given in Figure \ref{fig:sentl}. Similarly, in the other setting, we keep the training set with 80\% sentence-level annotated documents (which is $\sim$20\% of the total data), and add documents (with only RILE score), increasing the training set from 20 to 80\%. Results of this study are given in Figure \ref{fig:docl}. We observed that, jointly-trained model uses sentence-level annotations more effectively than cascaded approach (Figure \ref{fig:sentl}) --- even with less sentence-level annotations. Also, with less document-level signal (up to 40\%) for training, both the approaches perform similarly ($r$). As the training ratio increases, joint-training leverages both sentence and document-level signals effectively.
 
 
-\begin{figure}[!ht]
+\begin{figure}[!t]
 \centering
   \includegraphics[width=0.92\linewidth]{altw1.pdf}
-  \caption{Fixing 80\% training documents with RILE score, ratio of documents with sentence level annotations is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
+  \caption{Fixing 80\% training documents with RILE score, ratio of documents with sentence-level annotations is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
   \label{fig:sentl}
 \end{figure}
 
-\begin{figure}[!ht]
+\begin{figure}[!t]
 \centering
   \includegraphics[width=0.92\linewidth]{altw2.pdf}
-  \caption{Fixing 80\% training documents with sentence level annotations, ratio of documents with RILE score is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
+  \caption{Fixing 80\% training documents with sentence-level annotations, ratio of documents with RILE score is varied. \begin{small} $\markera$ \end{small} denotes \em{Cas}$_{d}$ \rm and \begin{small} $\markerb$ \end{small} denotes \em{JT}$_{d}$}
  \label{fig:docl}
  \end{figure}
  
 \subsection{Use of Country Information}
 Since the definition of left--right varies between countries, we study the influence of \textit{country} information in the proposed model with \textit{joint-training}. We use two ways to incorporate country information \cite{hoang2016incorporating}: (a) \textit{stack} --- one-hot encoding (13 countries, 1 X 13 vector) of each manifesto's \textit{country} is concatenated with hidden representation of the document ($S_{r}$ in Figure \ref{fig:HNN}) (b) \textit{non-linear stack} --- one-hot-encoded country vector is passed through a hidden layer with $\tanh$ non-linear activation and concatenated with $S_{r}$. With both the models we observed mild improvement in correlation (given in Table \ref{tab:al2}).
 
- \begin{table}[H]
+ \begin{table}[t!]
   \centering
   \begin{tabular}{ c c c }
   \toprule
@@ -372,11 +393,11 @@ Since the definition of left--right varies between countries, we study the influ
 \end{table}
 
 \section{Conclusion and Future Work}
-In this work we evaluated the utility of a joint sentence--document model for sentence level thematic classification and document level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches, where cascaded training can be seen as a special case of joint training. (b) joint-training leverages sentence level annotations more effectively than cascaded approach for RILE score regression task. There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. Off-the-shelf embeddings leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
+In this work we evaluated the utility of a joint sentence--document model for sentence-level thematic classification and document-level RILE score regression tasks. Our observations are as follows: (a) joint model performs better than state-of-art approaches, where cascaded training can be seen as a special case of joint training. (b) joint-training leverages sentence-level annotations more effectively than cascaded approach for RILE score regression task. There are many extensions possible to the current work. First is to handle class imbalance in the dataset with a cost-sensitive objective function. Secondly, CNN gave a comparable performance with Multi-layer Perceptron (NN), which motivates the need to evaluate an end-end sequential architecture. Off-the-shelf embeddings leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus. Finally, background information such as country can be leveraged more effectively.
 
 %We used off-the-shelf embeddings, which leads to out-of-vocabulary scenarios. It could be beneficial to  adapt word-embeddings with manifesto corpus.
 
-\begin{figure*}
+\begin{figure*}[t!]
 \includegraphics[width=1\linewidth]{US_Democrats_1.png}
 \caption{Democratic Party of USA, 2000 --- $\int$ denotes sentence segment. 601 - National Way of Life: Positive, 606 - Civic Mindedness: Positive, 410 - Economic Growth: Positive, 305: Political Authority}
 \label{fig:sub2}
