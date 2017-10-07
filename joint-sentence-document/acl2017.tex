@@ -106,9 +106,9 @@ Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party
 Other than the sentence-level labels, the manifesto text also has document-level signals,
 which quantify its position on the left--right spectrum \cite{slapin2008scaling}. Though sentence-level classification and document-level quantification tasks are inter-dependent, existing work handles them separately.  We instead propose a joint approach to model the two tasks together. Overall, the contributions of this work are as follows:
 \begin{itemize}
-\item we empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at the sentence and document-levels.
+\item we empirically study the utility of multi-lingual embeddings for cross-lingual manifesto text analysis --- at the sentence and document-levels
 
-\item we evaluate the effectiveness of modelling the sentence- and document-level tasks together.
+\item we evaluate the effectiveness of modelling the sentence- and document-level tasks together
 
 \item we study the value of \textit{country} information used in conjunction with text for the document-level regression task.
 \end{itemize}
@@ -130,7 +130,7 @@ For the document-level quantification task, much work has used label count aggre
 
 \section{Manifesto Text Analysis}
 
-In the CMP, trained annotators manually label manifesto sentences according to the 57 fine-grained political categories (shown in \tabref{fig:CMP}), which are grouped into seven policy areas: External Relations, Freedom and Democracy, Political System, Economy, Welfare and Quality of Life, Fabric of Society, and Social Groups. Political parties either write their promises as a bulleted list of individual sentences, or structured as paragraphs (an example is given in Figure \ref{fig:sub2}), proving more information on topic coherence. Also the length of documents, measured as the number of sentences, varies greatly between manifestos. The typical length (in sentences) over manifestos (948 in total) from 13 countries --- Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States --- is 516.7$\pm$667. Variance in the number of sentences across documents in conjunction with class imbalance makes automated thematic classification a challenging task.  
+In the CMP, trained annotators manually label manifesto sentences according to the 57 fine-grained political categories (shown in \tabref{fig:CMP}), which are grouped into seven policy areas: External Relations, Freedom and Democracy, Political System, Economy, Welfare and Quality of Life, Fabric of Society, and Social Groups. Political parties either write their promises as a bulleted list of individual sentences, or structured as paragraphs (an example is given in Figure \ref{fig:sub2}), providing more information on topic coherence. Also the length of documents, measured as the number of sentences, varies greatly between manifestos. The typical length (in sentences) over manifestos (948 in total) from 13 countries --- Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States --- is 516.7$\pm$667. Variance in the number of sentences across documents in conjunction with class imbalance makes automated thematic classification a challenging task.  
 
 A sentence is split into multiple segments if it discusses unrelated topics or different aspects of a larger policy, e.g. (as indicated by the different colors, and associated integer labels):
 %(especially RILE quantification)
