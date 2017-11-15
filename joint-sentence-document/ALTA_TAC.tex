@@ -93,7 +93,7 @@ We empirically show that the proposed joint model performs better than state-of-
 %Each sentence is segmented if it discusses more than one topic and labeled.
 
 Among many actors, political parties are at the core of contemporary democratic systems. One of the widely used datasets by political scientists is the Comparative
-Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see \tabref{fig:CMP}). These are important not only because it can be seen as party positions on fine-grained policy themes but also the coded text can be used in various downstream tasks \cite{lowe2011scaling}. While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
+Manifesto Project (CMP) dataset, initiated by \newcite{CMP}, that collects party election programs (so-called manifestos) from elections in many countries around the world. The goal of the project is to provide a large data collection to support political studies on electoral processes. A sub-part of the manifestos has been manually annotated at the sentence-level with one of over fifty fine-grained political themes, divided into 7 coarse-grained topics (see \tabref{fig:CMP}). These are important because it can be seen as party positions on fine-grained policy themes and also the coded text can be used for various downstream tasks \cite{lowe2011scaling}. While manual annotations are very useful for political analyses, they come with two major drawbacks. First, it is very time-consuming and labor-intensive to manually annotate each sentence with the correct category from a complex annotation scheme. Secondly, coder preferences towards particular categories might lead to annotation inconsistencies and affect comparability between manifestos annotated by different coders \cite{coder}. In order to overcome these challenges, fine and coarse-level manifesto sentence classification was addressed using supervised machine learning techniques \cite{verberne2014automatic, zirn2016classifying}. Nonetheless, manually-coded manifestos remain the crucial data source for studies in computational political science \cite{lowe2011scaling, nanni}. 
 %, using a topic hierarchy defined by Dutch political experts
 
 %  is one of the early works using manifesto text for 
@@ -183,7 +183,7 @@ The range of RILE is $[-100,100]$, which we scale to the range $[-1,1]$. Hence w
 Since it is a regression task, we minimize the mean-squared error loss function between the predicted $\hat{z}_i$ and actual RILE score $z_i$,
 %\sum_{d=1}^{D}
 \begin{equation}
-\mathcal{L}_D = \frac{1}{|D|}  \sum_{i=1}^{D_{s}} ||\hat{z}_i - z_i||^2_2
+\mathcal{L}_D = \frac{1}{|D|}  \sum_{i=1}^{D} ||\hat{z}_i - z_i||^2_2
 %\frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^\top (\hat{Y}_{d} - Y_{d}).
 \label{eq:doc-loss}
 \end{equation}
@@ -198,8 +198,10 @@ where $0 \le \alpha \le 1$ is a hyperparameter which is tuned on a development s
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document-level tasks} 
 
 We evaluate both cascaded and joint training for this objective function:
+%$\mathcal{L}_S(\hat{Y},Y)$ 
+%$\mathcal{L}_D(\hat{Z}, Z)$
 \begin{description}
-\item{\textbf{Cascaded Training}:} The sentence-level model is trained using $D_{s}$, to minimize $\mathcal{L}_S(\hat{Y},Y)$ in \eqnref{eq:sent-loss}, and the pre-trained sentence-level model is used to obtain document-level representation $\mathbf{r_{d}}$ for all the manifestos in the training set $D$. Then the document-level regression task is trained to minimize $\mathcal{L}_D(\hat{Z}, Z)$ from \eqnref{eq:doc-loss}. Here, the sentence-level model parameters are fixed when the document-level regression model is trained using $\mathbf{r_{d}}$.
+\item{\textbf{Cascaded Training}:} The sentence-level model is trained using $D_{s}$, to minimize $\mathcal{L}_S$ in \eqnref{eq:sent-loss}, and the pre-trained sentence-level model is used to obtain document-level representation $\mathbf{r_{d}}$ for all the manifestos in the training set $D$. Then the document-level regression task is trained to minimize $\mathcal{L}_D$ from \eqnref{eq:doc-loss}. Here, the sentence-level model parameters are fixed when the document-level regression model is trained using $\mathbf{r_{d}}$.
 
 \item{\textbf{Joint Training}:} The entire network is updated by minimizing the joint loss function from \eqnref{eq:joint-loss}. As in cascaded training, the sentence-level model is pre-trained using labeled sentences. Here the sentence-level model uses both labeled and unlabeled data.
 \end{description}
@@ -250,7 +252,7 @@ We first compare traditional bag-of-words discrete representation with distribut
 %Following are the sentence classification baseline techniques that we compare our proposed approach against.
 %, which is the state-of-art approach for fine-grained manifesto sentence classification 
 \begin{description}
-\item{Bag of words (\em{BoW-LR}, \em{BoW-NN}):} We use TF-IDF representation for sentences and build a model for each language separately. We use Logistic Regression classifier \cite{biessmann2016automating}, which is referred as \em{BoW-LR}. \rm We also use Neural Network classifier, which we refer to as \em{BoW-NN}. \rm
+\item{Bag-of-words (\em{BoW-LR}, \em{BoW-NN}):} We use TF-IDF representation for sentences and build a model for each language separately. We use Logistic Regression classifier \cite{biessmann2016automating}, which is referred as \em{BoW-LR}. \rm We also use Neural Network classifier, which we refer to as \em{BoW-NN}. \rm
 
 \item{Language-wise average embedding (\em{AE-NN$_{m}$}):} \rm We build a neural network classifier per language, with average multi-lingual neural embedding as sentence representation.
 \end{description}
@@ -326,7 +328,7 @@ For the document-level regression task, the following are baseline approaches. N
 
 % with \textit{tanh} output.
 \begin{description}
-\item{Bag of words (\em{BoW-NN$_{d}$}):} \rm We use TF-IDF representation for documents and build a neural network model  for each language.
+\item{Bag-of-words (\em{BoW-NN$_{d}$}):} \rm We use TF-IDF representation for documents and build a neural network model  for each language.
 %(to capture non-linear patterns)
 %regression model for each country and language separately. We use Linear Regression; referred to as \textit{LR-CTR} and \textit{LR-Lang} which are models built per country and language respectively. Since language-wise model performed better than country-wise model, we also build a
 \item{Average embedding (\em{AE-NN}$_{d}$):} We use average embedding of words as document representation to build a neural network model.
