@@ -147,7 +147,7 @@ where, $R = \{$104, 201, 203, 305, 401, 402, 407, 414, 505, 601, 603, 605, 606$\
 
 \section{Proposed Approach}
 
-We propose a joint sentence--document model to classify manifesto sentences into one out of 57 categories and also quantify the document-level RILE score. The joint formulation is not only to capture the task inter-dependencies, but also to use annotations at different levels of granularity (sentence and document) effectively --- a RILE score is available for 948 manifestos from 13 countries, whereas sentence-level annotations are available only for 235 manifestos. We use a neural network to model the sentence-level classification and document-level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use multi-lingual embeddings to represent words ($e_{w}$). We refer to the total set of manifestos available for training as $D$, and the subset which is annotated with sentence-level labels as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}, s_{2}, ..., s_{l_{d}}$. 
+We propose a joint sentence--document model to classify manifesto sentences into one out of 57 categories and also quantify the document-level RILE score. The joint formulation is employed not only to capture the task inter-dependencies, but also to use annotations at different levels of granularity (sentence and document) effectively --- a RILE score is available for 948 manifestos from 13 countries, whereas sentence-level annotations are available only for 235 manifestos. We use a neural network to model the sentence-level classification and document-level regression tasks. The proposed architecture is given in Figure \ref{fig:HNN}. Since the text across countries is multi-lingual in nature, we use multi-lingual embeddings to represent words ($e_{w}$). We refer to the total set of manifestos available for training as $D$, and the subset which is annotated with sentence-level labels as $D_{s}$. We denote each manifesto as $d$, which has $l_{d}$ sentences $s_{1}, s_{2}, ..., s_{l_{d}}$. 
 
 %from 13 countries ---  Austria, Australia, Denmark, Finland, France, Germany, Italy, Ireland, New Zealand, South Africa, Switzerland, United Kingdom and United States,
 
@@ -160,39 +160,40 @@ We propose a joint sentence--document model to classify manifesto sentences into
 
 \subsection{Sentence-level Model}
 We represent each sentence using the average embedding of its constituent words, $ \bm{s}_{i} = \frac{1}{|s_{i}|}\sum_{w \in s_{i}} e_{w}$.
-The average embedding representation is given as input to the hidden layer with rectified linear activation units (ReLU) to get the hidden representation. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives the probability of 57 classes as output.
+The average embedding representation is given as input to the hidden layer with rectified linear activation units (ReLU) to get the hidden representation. Finally, the predictions are obtained using a softmax layer, which takes the hidden representation as input and gives the probability of 57 classes as output, denoted $\hat{\mathbf{y}}_{ij}$.
 %\[ \hat{Y}_{s_{ik}} = \frac{e^{H_{s_{i}}^\top w_{pk}}}{\sum_{j=1}^{K}{e^{H_{s_{i}}^\top w_{pj}}}}\]
 % TJB: not worth defining softmax (as discussed!) ... similarly for ReLU
-We use the cross-entropy loss function for the sentence-level model. For sentences in $D_{s}$, with ground truth labels $Y_{s}$ (one-of-K encoding), the loss function is given as follows:
-  \begin{multline}
+We use the cross-entropy loss function for the sentence-level model. For sentences in $D_{s}$, with ground truth labels $\mathbf{y}_{ij}$ (using a one-hot encoding), the loss function is given as follows:
+  \begin{equation}
     \label{eq:sent-loss}
-    L_{S}(D_{s},Y_{s})= \\
-    -\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_{j=1}^{l_{d_{i}}}\sum_{k=1}^{K} Y_{s_{ijk}} \log \hat{Y}_{s_{ijk}}  
-  \end{multline}
+    \mathcal{L}_{S} = 
+    -\frac{1}{\sum_{i=1}^{D_{s}}l_{d_{i}}}\sum_{i=1}^{D_{s}}\sum_{j=1}^{l_{d_{i}}}\sum_{k=1}^{K} y_{{ijk}} \log \hat{y}_{{ijk}}  
+  \end{equation}
 %\footnote{\url{https://keras.io/layers/wrappers/\#timedistributed}%}
 
 \subsection{Joint Sentence--Document Model}
-Using the hierarchical neural network, we model the sentence-level classification and document-level regression tasks together. In the joint model, we use an unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($1$ to $n$). We use average-pooling with the concatenated hidden representations ($H_{s}$) and predicted output distributions ($\hat{Y}_{s}$) of individual sentences, to represent a document.\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution.}
-\begin{equation}
- S_{r} = \frac{1}{|l_{d_{i}}|}\sum_{s \in d_{i}} [\hat{Y}_{s}, H_{s}] 
-\end{equation}
-The range of RILE is $[-100,100]$, we scale it to the range $[-1,1]$. Hence we use a final $\tanh$ layer, with $z = W_{r}^\top H_{d}$, where $H_{d}$ = ReLU$(W_{d}^\top S_{r})$, as input.
+Using the hierarchical neural network, we model the sentence-level classification and document-level regression tasks together. In the joint model, we use an unrolled (time-distributed) neural network model for the sentences in a manifesto. Here, the model minimizes cross-entropy loss for sentences over each temporal layer ($j=1 \ldots n$). We use average-pooling with the concatenated hidden representations ($\mathbf{h}_{ij}$) and predicted output distributions ($\hat{\mathbf{y}}_{ij}$) of individual sentences, to represent a document,\footnote{We observed that the concatenated representation performed better than using either hidden representation or output distribution.} i.e.,
+$ \mathbf{r}_i = \frac{1}{|l_{d_{i}}|}\sum_{j \in d_{i}} \left[\begin{array}{cc} \hat{\mathbf{y}}_{ij} \\ \mathbf{h}_{ij} \end{array} \right]  $.
+
+The range of RILE is $[-100,100]$, which we scale to the range $[-1,1]$. Hence we use a final $\tanh$ layer, with $\hat{z}_i = W_{r}^\top \mathbf{h}_{d}$, where $\mathbf{h}_{d} = \text{ReLU}(W_{d}^\top \mathbf{r}_d)$, as input.
 %\[ \hat{y}_{d} = \tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} \]
-Since it is a regression task, we minimize the mean-squared error loss function between the predicted $\hat{y}_{d}$ and actual RILE score $y_{d}$. With the given RILE scores for training documents ($Y_{d}$) and estimated scores ($\hat{Y}_{d}$), the loss function is given as follows:
+Since it is a regression task, we minimize the mean-squared error loss function between the predicted $\hat{z}_i$ and actual RILE score $z_i$,
 %\sum_{d=1}^{D}
 \begin{equation}
-L_{d}(\hat{Y}_{d}, Y_{d}) = \frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^\top (\hat{Y}_{d} - Y_{d}).
+\mathcal{L}_D = \frac{1}{|D|}  \sum_{i=1}^{D_{s}} ||\hat{z}_i - z_i||^2_2
+%\frac{1}{|D|}  (\hat{Y}_{d} - Y_{d})^\top (\hat{Y}_{d} - Y_{d}).
 \label{eq:doc-loss}
 \end{equation}
 
 Overall, the loss function for the joint model, combining \eqnref[s]{eq:sent-loss} and \ref{eq:doc-loss}, is:
 \begin{equation}
- \alpha L_{s}(D_{s},Y_{s}) + (1-\alpha) L_{d}(\hat{Y}_{d}, Y_{d})
+ \alpha \mathcal{L}_S + (1-\alpha) \mathcal{L}_D
  \label{eq:joint-loss}
 \end{equation}
-where $0 \le \alpha \le 1$.
+where $0 \le \alpha \le 1$ is a hyperparameter which is tuned on a development set.
 %\footnote{http://128.2.220.95/multilingual}
 %\footnote{we use $\lambda$=1, since we give the same priority to sentence and document-level tasks} 
+
 We evaluate both cascaded and joint training for this objective function:
 \begin{description}
 \item{\textbf{Cascaded Training}:} The sentence-level model is trained using $D_{s}$, to minimize $L_{s}(D_{s},Y_{s})$ in \eqnref{eq:sent-loss}, and the pre-trained sentence-level model is used to obtain document-level representation $S_{r}$ for all the manifestos in training set $D$. Then the document-level regression task is trained to minimize $L_{d}(\hat{Y}_{d}, Y_{d})$ from \eqnref{eq:doc-loss}. Here, the sentence-level model parameters are fixed when the document-level regression model is trained using $S_{r}$.
